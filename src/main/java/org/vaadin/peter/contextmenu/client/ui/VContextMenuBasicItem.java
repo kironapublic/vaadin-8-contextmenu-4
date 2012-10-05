@@ -5,7 +5,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.vaadin.terminal.gwt.client.ui.Icon;
+import com.vaadin.client.ui.Icon;
 
 public class VContextMenuBasicItem extends FocusWidget {
 	private final FlowPanel root;

@@ -1,6 +1,6 @@
 package org.vaadin.peter.contextmenu.client.ui;
 
-import com.vaadin.terminal.gwt.client.ComponentState;
+import com.vaadin.shared.ComponentState;
 
 public class ContextMenuState extends ComponentState {
 	private static final long serialVersionUID = -247856391284942254L;

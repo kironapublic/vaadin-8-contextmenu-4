@@ -2,7 +2,7 @@ package org.vaadin.peter.contextmenu;
 
 import org.vaadin.peter.contextmenu.ContextMenuItem.ContextMenuItemClickListener;
 
-import com.vaadin.terminal.Resource;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;
 

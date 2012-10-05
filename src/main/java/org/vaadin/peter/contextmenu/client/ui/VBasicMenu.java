@@ -10,7 +10,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.vaadin.terminal.gwt.client.ui.VOverlay;
+import com.vaadin.client.ui.VOverlay;
 
 /**
  * Menu is a visible item of ContextMenu component. For every child menu new

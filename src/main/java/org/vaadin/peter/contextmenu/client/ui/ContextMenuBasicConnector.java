@@ -4,11 +4,11 @@ import org.vaadin.peter.contextmenu.ContextMenuBasic;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ComponentConnector;
-import com.vaadin.terminal.gwt.client.ConnectorHierarchyChangeEvent;
-import com.vaadin.terminal.gwt.client.communication.StateChangeEvent;
-import com.vaadin.terminal.gwt.client.ui.AbstractComponentContainerConnector;
-import com.vaadin.terminal.gwt.client.ui.Connect;
+import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.ConnectorHierarchyChangeEvent;
+import com.vaadin.client.communication.StateChangeEvent;
+import com.vaadin.client.ui.AbstractComponentContainerConnector;
+import com.vaadin.shared.ui.Connect;
 
 @Connect(ContextMenuBasic.class)
 public class ContextMenuBasicConnector extends
@@ -45,7 +45,7 @@ public class ContextMenuBasicConnector extends
 
 		getWidget().clearItems();
 
-		for (ComponentConnector child : getChildren()) {
+		for (ComponentConnector child : getChildComponents()) {
 			getWidget().addRootMenuItem(
 					(VContextMenuBasicItem) child.getWidget());
 		}

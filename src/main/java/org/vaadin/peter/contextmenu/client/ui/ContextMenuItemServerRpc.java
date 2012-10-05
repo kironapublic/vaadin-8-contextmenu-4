@@ -1,6 +1,6 @@
 package org.vaadin.peter.contextmenu.client.ui;
 
-import com.vaadin.terminal.gwt.client.communication.ServerRpc;
+import com.vaadin.shared.communication.ServerRpc;
 
 public interface ContextMenuItemServerRpc extends ServerRpc {
 

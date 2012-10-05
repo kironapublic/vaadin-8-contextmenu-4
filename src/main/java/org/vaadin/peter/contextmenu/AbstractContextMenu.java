@@ -7,7 +7,8 @@ import java.util.List;
 import org.vaadin.peter.contextmenu.ContextMenuItem.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.client.ui.ContextMenuState;
 
-import com.vaadin.terminal.Resource;
+
+import com.vaadin.server.Resource;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
 

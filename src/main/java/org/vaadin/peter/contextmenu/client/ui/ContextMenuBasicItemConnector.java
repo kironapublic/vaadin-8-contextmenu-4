@@ -14,13 +14,12 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ComponentConnector;
-import com.vaadin.terminal.gwt.client.ConnectorHierarchyChangeEvent;
-import com.vaadin.terminal.gwt.client.communication.RpcProxy;
-import com.vaadin.terminal.gwt.client.communication.StateChangeEvent;
-import com.vaadin.terminal.gwt.client.ui.AbstractComponentContainerConnector;
-import com.vaadin.terminal.gwt.client.ui.Connect;
-import com.vaadin.terminal.gwt.client.ui.Icon;
+import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.ConnectorHierarchyChangeEvent;
+import com.vaadin.client.communication.RpcProxy;
+import com.vaadin.client.communication.StateChangeEvent;
+import com.vaadin.client.ui.AbstractComponentContainerConnector;
+import com.vaadin.shared.ui.Connect;
 
 @Connect(ContextMenuBasicItem.class)
 public class ContextMenuBasicItemConnector extends
@@ -161,14 +160,10 @@ public class ContextMenuBasicItemConnector extends
 	public void onStateChanged(StateChangeEvent stateChangeEvent) {
 		super.onStateChanged(stateChangeEvent);
 
-		getWidget().setCaption(getState().getCaption());
+		getWidget().setCaption(getState().caption);
 		getWidget().removeIcon();
 
-		if (getState().getIcon() != null) {
-			Icon icon = new Icon(getConnection());
-			icon.setUri(getState().getIcon().getURL());
-			getWidget().setIcon(icon);
-		}
+		// icon
 	}
 
 	@Override
@@ -177,7 +172,7 @@ public class ContextMenuBasicItemConnector extends
 
 		getWidget().clearItems();
 
-		for (ComponentConnector child : getChildren()) {
+		for (ComponentConnector child : getChildComponents()) {
 			getWidget().addSubMenuItem(
 					(VContextMenuBasicItem) child.getWidget());
 		}

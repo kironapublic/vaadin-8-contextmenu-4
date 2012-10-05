@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
-import com.vaadin.terminal.Resource;
-import com.vaadin.tools.ReflectTools;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;
+import com.vaadin.util.ReflectTools;
 
 /**
  * ContextMenuItem is base interface for all the items within the context menu.
