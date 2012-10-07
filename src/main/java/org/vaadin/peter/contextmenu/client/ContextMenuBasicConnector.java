@@ -1,4 +1,4 @@
-package org.vaadin.peter.contextmenu.client.ui;
+package org.vaadin.peter.contextmenu.client;
 
 import org.vaadin.peter.contextmenu.ContextMenuBasic;
 

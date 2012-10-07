@@ -1,4 +1,4 @@
-package org.vaadin.peter.contextmenu.client.ui;
+package org.vaadin.peter.contextmenu.client;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.vaadin.peter.contextmenu.client.ui.ContextMenuItemServerRpc;
+import org.vaadin.peter.contextmenu.client.ContextMenuItemServerRpc;
 
 import com.vaadin.server.Resource;
 import com.vaadin.ui.AbstractComponentContainer;
