@@ -5,6 +5,7 @@
 	<groupId>org.vaadin.peter</groupId>
 	<artifactId>contextmenu</artifactId>
 	<version>4.0</version>
+	<packaging>war</packaging>
 
 	<name>ContextMenu</name>
 	<description>ContextMenu add-on for Vaadin 7</description>
@@ -68,6 +69,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>contextmenu</finalName>
 		<plugins>
 
 			<plugin>
@@ -84,10 +86,16 @@
 				<artifactId>vaadin-maven-plugin</artifactId>
 				<version>7.0.0.beta3</version>
 				<configuration>
+				<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets
+					</webappDirectory>
+					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets
+					</hostedWebapp>
 					<logLevel>TRACE</logLevel>
+					
 				</configuration>
-
 			</plugin>
+
+
 
 		</plugins>
 	</build>

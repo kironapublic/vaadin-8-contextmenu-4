@@ -7,10 +7,10 @@
 	</context-param>
 	<servlet>
 		<servlet-name>ContextMenuApplication</servlet-name>
-		<servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
+		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
 		<init-param>
-			<param-name>root</param-name>
-			<param-value>org.vaadin.peter.contextmenu.test.ContextMenuApplication</param-value>
+			<param-name>UI</param-name>
+			<param-value>org.vaadin.peter.contextmenu.test.ContextMenuTestUI</param-value>
 		</init-param>
 		<init-param>
 			<description>Application widgetset</description>
