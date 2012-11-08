@@ -5,67 +5,86 @@
 	<groupId>org.vaadin.peter</groupId>
 	<artifactId>contextmenu</artifactId>
 	<version>4.0</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>ContextMenu</name>
 	<description>ContextMenu add-on for Vaadin 7</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<vaadin.version>7.0.0.beta7</vaadin.version>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Maven 2 Repository</name>
+			<url>http://download.java.net/maven/2</url>
+			<layout>default</layout>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>vaadin-plugin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-releases/</url>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
 
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
-			<version>7.0.0.beta3</version>
+			<version>${vaadin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client</artifactId>
-			<version>7.0.0.beta3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-client-compiled</artifactId>
-			<version>7.0.0.beta3</version>
+			<version>${vaadin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
-			<version>7.0.0.beta3</version>
+			<version>${vaadin.version}</version>
 		</dependency>
+	
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>7.2.2.v20101205</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-client-compiler</artifactId>
-			<version>7.0.0.beta3</version>
+			<artifactId>vaadin-testbench</artifactId>
+			<version>3.0.2</version>
+			<scope>test</scope>
 		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -82,22 +101,61 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<!-- Implementation-Title and Implementation-Version come from the 
+								POM by default -->
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<!-- Package format version - do not change -->
+							<Vaadin-Package-Version>1</Vaadin-Package-Version>
+
+							<!-- Comma-separated list of widgetsets in the package -->
+							<!-- TODO figure out a way make this automatically configured -->
+							<Vaadin-Widgetsets>org.vaadin.peter.contextmenu.ContextmenuWidgetset</Vaadin-Widgetsets>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>7.0.0.beta3</version>
+				<version>${vaadin.version}</version>
 				<configuration>
-				<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets
-					</webappDirectory>
-					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets
-					</hostedWebapp>
+					<webappDirectory>${basedir}/target/testwebapp/VAADIN/widgetsets</webappDirectory>
+					<hostedWebapp>${basedir}/target/testwebapp/VAADIN/widgetsets</hostedWebapp>
 					<logLevel>TRACE</logLevel>
-					
+					<runTarget>http://localhost:9998</runTarget>
+					<noServer>true</noServer>
 				</configuration>
 			</plugin>
 
 
 
 		</plugins>
+
+		<resources>
+			<resource>
+				<!-- This add sources, .gwt.xml files etc to jar from source directory. 
+					Not quite maven convention byt easieast to setup this way. -->
+				<directory>src/main/java</directory>
+
+			</resource>
+			<!-- This is here to simplify working with GWT plugin during test widgetset 
+				compilation. Test widgetset is this way more like a real world usage and 
+				also lets your test up to e.g. use other add-ons. Ensure these are excluded 
+				from the artifact ( jar file ). -->
+			<resource>
+				<directory>src/test/resources</directory>
+			</resource>
+		</resources>
 	</build>
 
 </project>

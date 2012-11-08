@@ -168,8 +168,6 @@ public class ContextMenuBasicItemConnector extends
 
 	@Override
 	public void onConnectorHierarchyChange(ConnectorHierarchyChangeEvent event) {
-		super.onConnectorHierarchyChange(event);
-
 		getWidget().clearItems();
 
 		for (ComponentConnector child : getChildComponents()) {

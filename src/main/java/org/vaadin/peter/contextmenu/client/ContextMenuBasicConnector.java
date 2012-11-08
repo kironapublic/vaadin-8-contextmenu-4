@@ -8,6 +8,7 @@ import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
+import com.vaadin.shared.ComponentState;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(ContextMenuBasic.class)
@@ -23,6 +24,11 @@ public class ContextMenuBasicConnector extends
 	@Override
 	public VContextMenuBasic getWidget() {
 		return (VContextMenuBasic) super.getWidget();
+	}
+	
+	@Override
+	public ContextMenuState getState() {
+		return (ContextMenuState) super.getState();
 	}
 
 	@Override
@@ -41,7 +47,7 @@ public class ContextMenuBasicConnector extends
 
 	@Override
 	public void onConnectorHierarchyChange(ConnectorHierarchyChangeEvent event) {
-		super.onConnectorHierarchyChange(event);
+		
 
 		getWidget().clearItems();
 
