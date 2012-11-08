@@ -1,26 +1,19 @@
 package org.vaadin.peter.contextmenu;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.vaadin.peter.contextmenu.ContextMenuItem.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.client.ContextMenuState;
+import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
-import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Tree;
 
 public class ContextMenu extends AbstractExtension {
 	private static final long serialVersionUID = 4275181115413786498L;
 
-	private final List<Component> items;
-
 	public ContextMenu() {
-		items = new LinkedList<Component>();
-		getState().setShowing(false);
+		getState().showing = false;
 	}
 
 	/**
@@ -30,11 +23,9 @@ public class ContextMenu extends AbstractExtension {
 	 * @return reference to added item
 	 */
 	public ContextMenuItem addItem(String caption) {
-		ContextMenuItem item = buildContextMenuItem();
-		item.setCaption(caption);
-		items.add(item);
+		ContextMenuItemState itemState = getState().addChild(caption);
 
-		return item;
+		return new ContextMenuItem(itemState);
 	}
 
 	/**
@@ -44,11 +35,7 @@ public class ContextMenu extends AbstractExtension {
 	 * @return reference to added item
 	 */
 	public ContextMenuItem addItem(Resource icon) {
-		ContextMenuItem item = buildContextMenuItem();
-		item.setIcon(icon);
-		items.add(item);
-
-		return item;
+		return null;
 	}
 
 	/**
@@ -59,12 +46,7 @@ public class ContextMenu extends AbstractExtension {
 	 * @return reference to added item
 	 */
 	public ContextMenuItem addItem(String caption, Resource icon) {
-		ContextMenuItem item = buildContextMenuItem();
-		item.setCaption(caption);
-		item.setIcon(icon);
-		items.add(item);
-
-		return item;
+		return addItem(caption);
 	}
 
 	/**
@@ -73,30 +55,14 @@ public class ContextMenu extends AbstractExtension {
 	 * @param contextMenuItem
 	 */
 	public void removeItem(ContextMenuItem contextMenuItem) {
-		items.remove(contextMenuItem);
+		// items.remove(contextMenuItem);
 	}
 
 	/**
 	 * Removes all items from the context menu root.
 	 */
 	public void removeAllItems() {
-		items.clear();
-	}
-
-	/**
-	 * Opens context menu to given coordinates. Possible scroll position will be
-	 * automatically added to given coordinates.
-	 * 
-	 * @param x
-	 *            top left x of context menu root
-	 * @param y
-	 *            top left y of context menu root
-	 */
-	public void openAt(int x, int y) {
-		getState().setRootMenuX(x);
-		getState().setRootMenuY(y);
-
-		getState().setShowing(true);
+		// items.clear();
 	}
 
 	public void extend(Table table) {
@@ -107,7 +73,7 @@ public class ContextMenu extends AbstractExtension {
 		super.extend(tree);
 	}
 
-	public void extend(AbstractComponentContainer layout) {
+	public void extend(AbstractLayout layout) {
 		super.extend(layout);
 	}
 
@@ -116,38 +82,19 @@ public class ContextMenu extends AbstractExtension {
 		return (ContextMenuState) super.getState();
 	}
 
-	private ContextMenuItem buildContextMenuItem() {
-		try {
-			ContextMenuItem menuItem = new ContextMenuItem();
+	public class ContextMenuItem {
 
-			return menuItem;
-		} catch (Exception e) {
-			throw new RuntimeException(
-					"Failed to instantiate proper context menu item");
+		private final ContextMenuItemState state;
+
+		protected ContextMenuItem(ContextMenuItemState itemState) {
+			this.state = itemState;
+		}
+
+		public ContextMenuItem addItem(String caption) {
+			ContextMenuItem item = new ContextMenuItem(state.addChild(caption));
+			markAsDirty();
+			return item;
 		}
 	}
 
-	/**
-	 * Recursively adds given listener to all the item in the context menu. If
-	 * more items are added after adding the listener, new items added
-	 * afterwards will also get the same listener. This means that there is no
-	 * difference between the order of adding listener or items. All menu items
-	 * will have all the listeners added by calling this method. If you want to
-	 * add item specific listeners you can all
-	 * <code>ContextMenuItem.addListener</code> method.
-	 * 
-	 * @param clickListener
-	 */
-	public void addListener(ContextMenuItemClickListener listener) {
-
-	}
-
-	/**
-	 * Recursively removes given listener from all the items in the context
-	 * menu. Items added to context menu after removing a listener will no
-	 * longer receive the removed listener.
-	 */
-	public void removeListener(ContextMenuItemClickListener listener) {
-
-	}
 }

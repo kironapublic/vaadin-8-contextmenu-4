@@ -1,36 +1,68 @@
 package org.vaadin.peter.contextmenu.client;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.shared.ComponentState;
 
 public class ContextMenuState extends ComponentState {
 	private static final long serialVersionUID = -247856391284942254L;
 
-	private int rootMenuX;
-	private int rootMenuY;
+	public int rootMenuX;
+	public int rootMenuY;
 
-	private boolean showing;
+	public boolean showing;
 
-	public void setRootMenuX(int rootMenuX) {
-		this.rootMenuX = rootMenuX;
+	private List<ContextMenuItemState> rootItems;
+
+	public ContextMenuState() {
+		rootItems = new ArrayList<ContextMenuState.ContextMenuItemState>();
 	}
 
-	public void setRootMenuY(int rootMenuY) {
-		this.rootMenuY = rootMenuY;
+	public ContextMenuItemState addChild(String caption) {
+		ContextMenuItemState rootItem = new ContextMenuItemState();
+		rootItem.caption = caption;
+
+		rootItems.add(rootItem);
+
+		return rootItem;
 	}
 
-	public int getRootMenuX() {
-		return rootMenuX;
+	public List<ContextMenuItemState> getRootItems() {
+		return rootItems;
 	}
 
-	public int getRootMenuY() {
-		return rootMenuY;
+	public void setRootItems(List<ContextMenuItemState> rootItems) {
+		this.rootItems = rootItems;
 	}
 
-	public boolean isShowing() {
-		return showing;
-	}
+	public static class ContextMenuItemState implements Serializable {
+		private static final long serialVersionUID = 3836772122928080543L;
 
-	public void setShowing(boolean showing) {
-		this.showing = showing;
+		private List<ContextMenuItemState> children;
+
+		public String caption;
+
+		public ContextMenuItemState() {
+			children = new ArrayList<ContextMenuState.ContextMenuItemState>();
+		}
+
+		public ContextMenuItemState addChild(String caption) {
+			ContextMenuItemState child = new ContextMenuItemState();
+			child.caption = caption;
+
+			children.add(child);
+
+			return child;
+		}
+
+		public List<ContextMenuItemState> getChildren() {
+			return children;
+		}
+
+		public void setChildren(List<ContextMenuItemState> children) {
+			this.children = children;
+		}
 	}
 }

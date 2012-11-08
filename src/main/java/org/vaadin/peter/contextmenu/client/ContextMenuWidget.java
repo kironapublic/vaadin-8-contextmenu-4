@@ -1,5 +1,8 @@
 package org.vaadin.peter.contextmenu.client;
 
+import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.DOM;
@@ -15,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Peter Lehto / Vaadin Ltd
  */
 public class ContextMenuWidget extends Widget {
-	private final ContextMenuOverlay rootMenu;
+	private final ContextMenuOverlay menuOverlay;
 
 	private final NativePreviewHandler nativeEventHandler = new NativePreviewHandler() {
 
@@ -46,11 +49,11 @@ public class ContextMenuWidget extends Widget {
 
 		Event.addNativePreviewHandler(nativeEventHandler);
 
-		rootMenu = new ContextMenuOverlay();
+		menuOverlay = new ContextMenuOverlay();
 	}
 
 	protected boolean eventTargetContextMenu(Event nativeEvent) {
-		for (ContextMenuItemWidget item : rootMenu.getMenuItems()) {
+		for (ContextMenuItemWidget item : menuOverlay.getMenuItems()) {
 			if (item.eventTargetsPopup(nativeEvent)) {
 				return true;
 			}
@@ -60,31 +63,63 @@ public class ContextMenuWidget extends Widget {
 	}
 
 	protected boolean isShowing() {
-		return rootMenu.isShowing();
+		return menuOverlay.isShowing();
 	}
 
 	public void hide() {
-		rootMenu.hide();
+		menuOverlay.hide();
 	}
 
-	public void addRootMenuItem(ContextMenuItemWidget rootItem) {
-		rootItem.setRootComponent(this);
-		rootItem.setParentItem(null);
+	public void addRootMenuItem(ContextMenuItemState rootItem,
+			ContextMenuConnector connector) {
+		ContextMenuItemWidget itemWidget = createEmptyItemWidget(
+				rootItem.caption, connector);
+		itemWidget.setRootComponent(this);
+		menuOverlay.addMenuItem(itemWidget);
 
-		rootMenu.addMenuItem(rootItem);
+		for (ContextMenuItemState childState : rootItem.getChildren()) {
+			createSubMenu(itemWidget, childState, connector);
+		}
+	}
+
+	private ContextMenuItemWidget createEmptyItemWidget(String caption,
+			ContextMenuConnector contextMenuConnector) {
+		ContextMenuItemWidget widget = GWT.create(ContextMenuItemWidget.class);
+		widget.setCaption(caption);
+
+		ContextMenuItemWidgetHandler handler = new ContextMenuItemWidgetHandler(
+				widget, contextMenuConnector);
+		widget.addClickHandler(handler);
+		widget.addMouseOutHandler(handler);
+		widget.addMouseOverHandler(handler);
+		widget.addKeyUpHandler(handler);
+		widget.setRootComponent(this);
+
+		return widget;
+	}
+
+	private void createSubMenu(ContextMenuItemWidget parentWidget,
+			ContextMenuItemState childState, ContextMenuConnector connector) {
+		ContextMenuItemWidget childWidget = createEmptyItemWidget(
+				childState.caption, connector);
+		parentWidget.addSubMenuItem(childWidget);
+
+		for (ContextMenuItemState child : childState.getChildren()) {
+			createSubMenu(childWidget, child, connector);
+		}
 	}
 
 	public void clearItems() {
-		rootMenu.clearItems();
+		menuOverlay.clearItems();
 	}
 
 	public void showContextMenu(int rootMenuX, int rootMenuY) {
 		rootMenuX += Window.getScrollLeft();
 		rootMenuY += Window.getScrollTop();
 
-		rootMenu.setPopupPosition(rootMenuX, rootMenuY);
-		rootMenu.show();
+		menuOverlay.setPopupPosition(rootMenuX, rootMenuY);
+		menuOverlay.show();
 
-		rootMenu.normalizeItemWidths();
+		menuOverlay.normalizeItemWidths();
 	}
 }

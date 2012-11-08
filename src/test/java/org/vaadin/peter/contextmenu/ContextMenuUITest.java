@@ -16,8 +16,12 @@ public class ContextMenuUITest extends UI {
 		setContent(layout);
 
 		final ContextMenu contextMenu = new ContextMenu();
+		contextMenu.addItem("Test item #1").addItem("Child #1")
+				.addItem("Child 2");
+		contextMenu.addItem("Test item #2");
+		contextMenu.getState().showing = true;
+
 		contextMenu.extend(layout);
 
-		contextMenu.addItem("Test item #1").addItem("Test Item #2");
 	}
 }
