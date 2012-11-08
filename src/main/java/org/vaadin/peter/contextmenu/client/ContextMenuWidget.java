@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Peter Lehto / Vaadin Ltd
  */
-public class VContextMenuBasic extends Widget {
-	private final VBasicMenu rootMenu;
+public class ContextMenuWidget extends Widget {
+	private final ContextMenuOverlay rootMenu;
 
 	private final NativePreviewHandler nativeEventHandler = new NativePreviewHandler() {
 
@@ -40,17 +40,17 @@ public class VContextMenuBasic extends Widget {
 		}
 	};
 
-	public VContextMenuBasic() {
+	public ContextMenuWidget() {
 		Element element = DOM.createDiv();
 		setElement(element);
 
 		Event.addNativePreviewHandler(nativeEventHandler);
 
-		rootMenu = new VBasicMenu();
+		rootMenu = new ContextMenuOverlay();
 	}
 
 	protected boolean eventTargetContextMenu(Event nativeEvent) {
-		for (VContextMenuBasicItem item : rootMenu.getMenuItems()) {
+		for (ContextMenuItemWidget item : rootMenu.getMenuItems()) {
 			if (item.eventTargetsPopup(nativeEvent)) {
 				return true;
 			}
@@ -67,7 +67,7 @@ public class VContextMenuBasic extends Widget {
 		rootMenu.hide();
 	}
 
-	public void addRootMenuItem(VContextMenuBasicItem rootItem) {
+	public void addRootMenuItem(ContextMenuItemWidget rootItem) {
 		rootItem.setRootComponent(this);
 		rootItem.setParentItem(null);
 

@@ -7,21 +7,21 @@ import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.client.ui.Icon;
 
-public class VContextMenuBasicItem extends FocusWidget {
+public class ContextMenuItemWidget extends FocusWidget {
 	private final FlowPanel root;
 
 	protected Icon icon;
 	private final FlowPanel iconContainer;
 	private final Label text;
 
-	private VBasicMenu subMenu;
+	private ContextMenuOverlay subMenu;
 
-	private VContextMenuBasicItem parentItem;
-	private VBasicMenu owner;
+	private ContextMenuItemWidget parentItem;
+	private ContextMenuOverlay owner;
 
-	private VContextMenuBasic rootComponent;
+	private ContextMenuWidget rootComponent;
 
-	public VContextMenuBasicItem() {
+	public ContextMenuItemWidget() {
 		root = new FlowPanel();
 		root.setStylePrimaryName("v-context-menu-item-basic");
 
@@ -81,18 +81,18 @@ public class VContextMenuBasicItem extends FocusWidget {
 	 * 
 	 * @param owner
 	 */
-	public void setOwner(VBasicMenu owner) {
+	public void setOwner(ContextMenuOverlay owner) {
 		this.owner = owner;
 	}
 
-	public void setParentItem(VContextMenuBasicItem parentItem) {
+	public void setParentItem(ContextMenuItemWidget parentItem) {
 		this.parentItem = parentItem;
 	}
 
 	/**
 	 * @return menu item that opened the menu to which this item belongs
 	 */
-	public VContextMenuBasicItem getParentItem() {
+	public ContextMenuItemWidget getParentItem() {
 		return parentItem;
 	}
 
@@ -109,9 +109,9 @@ public class VContextMenuBasicItem extends FocusWidget {
 		}
 	}
 
-	public void addSubMenuItem(VContextMenuBasicItem contextMenuItem) {
+	public void addSubMenuItem(ContextMenuItemWidget contextMenuItem) {
 		if (!hasSubMenu()) {
-			subMenu = new VBasicMenu();
+			subMenu = new ContextMenuOverlay();
 			setStylePrimaryName("v-context-menu-item-basic-submenu");
 		}
 
@@ -133,7 +133,7 @@ public class VContextMenuBasicItem extends FocusWidget {
 		icon = null;
 	}
 
-	public void setRootComponent(VContextMenuBasic rootComponent) {
+	public void setRootComponent(ContextMenuWidget rootComponent) {
 		this.rootComponent = rootComponent;
 	}
 
@@ -143,13 +143,13 @@ public class VContextMenuBasicItem extends FocusWidget {
 
 	protected void selectLowerSibling() {
 		setFocus(false);
-		owner.selectItemAfter(VContextMenuBasicItem.this);
+		owner.selectItemAfter(ContextMenuItemWidget.this);
 
 	}
 
 	protected void selectUpperSibling() {
 		setFocus(false);
-		owner.selectItemBefore(VContextMenuBasicItem.this);
+		owner.selectItemBefore(ContextMenuItemWidget.this);
 	}
 
 	protected void closeThisAndSelectParent() {
@@ -212,7 +212,7 @@ public class VContextMenuBasicItem extends FocusWidget {
 		}
 
 		if (hasSubMenu()) {
-			for (VContextMenuBasicItem item : subMenu.getMenuItems()) {
+			for (ContextMenuItemWidget item : subMenu.getMenuItems()) {
 				if (item.eventTargetsPopup(nativeEvent)) {
 					return true;
 				}

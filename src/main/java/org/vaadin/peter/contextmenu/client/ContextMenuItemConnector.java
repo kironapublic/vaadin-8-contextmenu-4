@@ -1,6 +1,6 @@
 package org.vaadin.peter.contextmenu.client;
 
-import org.vaadin.peter.contextmenu.ContextMenuBasicItem;
+import org.vaadin.peter.contextmenu.ContextMenuItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,8 +21,8 @@ import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
 import com.vaadin.shared.ui.Connect;
 
-@Connect(ContextMenuBasicItem.class)
-public class ContextMenuBasicItemConnector extends
+@Connect(ContextMenuItem.class)
+public class ContextMenuItemConnector extends
 		AbstractComponentContainerConnector implements ClickHandler,
 		MouseOverHandler, MouseOutHandler, KeyUpHandler {
 	private static final long serialVersionUID = 8439116886277413949L;
@@ -50,12 +50,12 @@ public class ContextMenuBasicItemConnector extends
 
 	@Override
 	protected Widget createWidget() {
-		return GWT.create(VContextMenuBasicItem.class);
+		return GWT.create(ContextMenuItemWidget.class);
 	}
 
 	@Override
-	public VContextMenuBasicItem getWidget() {
-		return (VContextMenuBasicItem) super.getWidget();
+	public ContextMenuItemWidget getWidget() {
+		return (ContextMenuItemWidget) super.getWidget();
 	}
 
 	@Override
@@ -172,7 +172,7 @@ public class ContextMenuBasicItemConnector extends
 
 		for (ComponentConnector child : getChildComponents()) {
 			getWidget().addSubMenuItem(
-					(VContextMenuBasicItem) child.getWidget());
+					(ContextMenuItemWidget) child.getWidget());
 		}
 	}
 

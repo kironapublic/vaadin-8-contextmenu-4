@@ -1,6 +1,6 @@
 package org.vaadin.peter.contextmenu.client;
 
-import org.vaadin.peter.contextmenu.ContextMenuBasic;
+import org.vaadin.peter.contextmenu.ContextMenu;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
@@ -8,24 +8,23 @@ import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
-import com.vaadin.shared.ComponentState;
 import com.vaadin.shared.ui.Connect;
 
-@Connect(ContextMenuBasic.class)
-public class ContextMenuBasicConnector extends
+@Connect(ContextMenu.class)
+public class ContextMenuConnector extends
 		AbstractComponentContainerConnector {
 	private static final long serialVersionUID = 3830712282306785118L;
 
 	@Override
 	protected Widget createWidget() {
-		return GWT.create(VContextMenuBasic.class);
+		return GWT.create(ContextMenuWidget.class);
 	}
 
 	@Override
-	public VContextMenuBasic getWidget() {
-		return (VContextMenuBasic) super.getWidget();
+	public ContextMenuWidget getWidget() {
+		return (ContextMenuWidget) super.getWidget();
 	}
-	
+
 	@Override
 	public ContextMenuState getState() {
 		return (ContextMenuState) super.getState();
@@ -35,7 +34,7 @@ public class ContextMenuBasicConnector extends
 	public void onStateChanged(StateChangeEvent stateChangeEvent) {
 		super.onStateChanged(stateChangeEvent);
 
-		ContextMenuState state = (ContextMenuState) getState();
+		ContextMenuState state = getState();
 
 		if (state.isShowing()) {
 			getWidget().showContextMenu(state.getRootMenuX(),
@@ -47,13 +46,12 @@ public class ContextMenuBasicConnector extends
 
 	@Override
 	public void onConnectorHierarchyChange(ConnectorHierarchyChangeEvent event) {
-		
 
 		getWidget().clearItems();
 
 		for (ComponentConnector child : getChildComponents()) {
 			getWidget().addRootMenuItem(
-					(VContextMenuBasicItem) child.getWidget());
+					(ContextMenuItemWidget) child.getWidget());
 		}
 	}
 
@@ -63,7 +61,7 @@ public class ContextMenuBasicConnector extends
 	}
 
 	public void menuItemClicked(
-			ContextMenuBasicItemConnector contextMenuBasicItemConnector) {
+			ContextMenuItemConnector contextMenuBasicItemConnector) {
 		// TODO Auto-generated method stub
 
 	}

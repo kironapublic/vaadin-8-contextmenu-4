@@ -18,10 +18,10 @@ import com.vaadin.client.ui.VOverlay;
  * 
  * @author Peter Lehto / IT Mill Oy Ltd
  */
-class VBasicMenu extends VOverlay {
+class ContextMenuOverlay extends VOverlay {
 	private final FlowPanel root;
 
-	private final List<VContextMenuBasicItem> menuItems;
+	private final List<ContextMenuItemWidget> menuItems;
 
 	private final CloseHandler<PopupPanel> closeHandler = new CloseHandler<PopupPanel>() {
 
@@ -31,7 +31,7 @@ class VBasicMenu extends VOverlay {
 		}
 	};
 
-	public VBasicMenu() {
+	public ContextMenuOverlay() {
 		super(false, false, true);
 
 		addCloseHandler(closeHandler);
@@ -40,13 +40,13 @@ class VBasicMenu extends VOverlay {
 		root = new FlowPanel();
 		root.setStyleName("v-context-menu");
 
-		menuItems = new LinkedList<VContextMenuBasicItem>();
+		menuItems = new LinkedList<ContextMenuItemWidget>();
 
 		add(root);
 	}
 
 	public boolean isSubmenuOpen() {
-		for (VContextMenuBasicItem item : menuItems) {
+		for (ContextMenuItemWidget item : menuItems) {
 			if (item.isSubmenuOpen()) {
 				return true;
 			}
@@ -70,7 +70,7 @@ class VBasicMenu extends VOverlay {
 	}
 
 	private void unfocusAll() {
-		for (VContextMenuBasicItem item : menuItems) {
+		for (ContextMenuItemWidget item : menuItems) {
 			item.setFocus(false);
 		}
 	}
@@ -78,7 +78,7 @@ class VBasicMenu extends VOverlay {
 	protected void normalizeItemWidths() {
 		int widestItemWidth = getWidthOfWidestItem();
 
-		for (VContextMenuBasicItem item : menuItems) {
+		for (ContextMenuItemWidget item : menuItems) {
 			if (item.getOffsetWidth() <= widestItemWidth) {
 				item.setWidth(widestItemWidth + "px");
 			}
@@ -96,7 +96,7 @@ class VBasicMenu extends VOverlay {
 	private int getWidthOfWidestItem() {
 		int maxWidth = 0;
 
-		for (VContextMenuBasicItem item : menuItems) {
+		for (ContextMenuItemWidget item : menuItems) {
 			int itemWidth = item.getOffsetWidth() + 1;
 
 			if (itemWidth > maxWidth) {
@@ -114,7 +114,7 @@ class VBasicMenu extends VOverlay {
 		super.hide();
 	}
 
-	public List<VContextMenuBasicItem> getMenuItems() {
+	public List<ContextMenuItemWidget> getMenuItems() {
 		return menuItems;
 	}
 
@@ -125,7 +125,7 @@ class VBasicMenu extends VOverlay {
 		return this.menuItems.size();
 	}
 
-	public void openNextTo(VContextMenuBasicItem parentMenuItem) {
+	public void openNextTo(ContextMenuItemWidget parentMenuItem) {
 		int left = parentMenuItem.getAbsoluteLeft()
 				+ parentMenuItem.getOffsetWidth();
 		int top = parentMenuItem.getAbsoluteTop();
@@ -137,12 +137,12 @@ class VBasicMenu extends VOverlay {
 	}
 
 	public void closeSubMenus() {
-		for (VContextMenuBasicItem child : menuItems) {
+		for (ContextMenuItemWidget child : menuItems) {
 			child.hideSubMenu();
 		}
 	}
 
-	public void selectItemBefore(VContextMenuBasicItem item) {
+	public void selectItemBefore(ContextMenuItemWidget item) {
 		int index = menuItems.indexOf(item);
 
 		index -= 1;
@@ -151,11 +151,11 @@ class VBasicMenu extends VOverlay {
 			index = menuItems.size() - 1;
 		}
 
-		VContextMenuBasicItem itemToSelect = menuItems.get(index);
+		ContextMenuItemWidget itemToSelect = menuItems.get(index);
 		itemToSelect.setFocus(true);
 	}
 
-	public void selectItemAfter(VContextMenuBasicItem item) {
+	public void selectItemAfter(ContextMenuItemWidget item) {
 		int index = menuItems.indexOf(item);
 
 		index += 1;
@@ -164,11 +164,11 @@ class VBasicMenu extends VOverlay {
 			index = 0;
 		}
 
-		VContextMenuBasicItem itemToSelect = menuItems.get(index);
+		ContextMenuItemWidget itemToSelect = menuItems.get(index);
 		itemToSelect.setFocus(true);
 	}
 
-	public void addMenuItem(VContextMenuBasicItem menuItem) {
+	public void addMenuItem(ContextMenuItemWidget menuItem) {
 		menuItem.setOwner(this);
 
 		menuItems.add(menuItem);
