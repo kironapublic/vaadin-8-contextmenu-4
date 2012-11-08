@@ -20,9 +20,10 @@ public class ContextMenuState extends ComponentState {
 		rootItems = new ArrayList<ContextMenuState.ContextMenuItemState>();
 	}
 
-	public ContextMenuItemState addChild(String caption) {
+	public ContextMenuItemState addChild(String caption, String id) {
 		ContextMenuItemState rootItem = new ContextMenuItemState();
 		rootItem.caption = caption;
+		rootItem.id = id;
 
 		rootItems.add(rootItem);
 
@@ -44,13 +45,16 @@ public class ContextMenuState extends ComponentState {
 
 		public String caption;
 
+		public String id;
+
 		public ContextMenuItemState() {
 			children = new ArrayList<ContextMenuState.ContextMenuItemState>();
 		}
 
-		public ContextMenuItemState addChild(String caption) {
+		public ContextMenuItemState addChild(String caption, String id) {
 			ContextMenuItemState child = new ContextMenuItemState();
 			child.caption = caption;
+			child.id = id;
 
 			children.add(child);
 

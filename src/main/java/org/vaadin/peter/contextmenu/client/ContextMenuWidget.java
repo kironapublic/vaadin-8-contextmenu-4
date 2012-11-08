@@ -72,9 +72,9 @@ public class ContextMenuWidget extends Widget {
 
 	public void addRootMenuItem(ContextMenuItemState rootItem,
 			ContextMenuConnector connector) {
-		ContextMenuItemWidget itemWidget = createEmptyItemWidget(
+		ContextMenuItemWidget itemWidget = createEmptyItemWidget(rootItem.id,
 				rootItem.caption, connector);
-		itemWidget.setRootComponent(this);
+
 		menuOverlay.addMenuItem(itemWidget);
 
 		for (ContextMenuItemState childState : rootItem.getChildren()) {
@@ -82,9 +82,10 @@ public class ContextMenuWidget extends Widget {
 		}
 	}
 
-	private ContextMenuItemWidget createEmptyItemWidget(String caption,
-			ContextMenuConnector contextMenuConnector) {
+	private ContextMenuItemWidget createEmptyItemWidget(String id,
+			String caption, ContextMenuConnector contextMenuConnector) {
 		ContextMenuItemWidget widget = GWT.create(ContextMenuItemWidget.class);
+		widget.setId(id);
 		widget.setCaption(caption);
 
 		ContextMenuItemWidgetHandler handler = new ContextMenuItemWidgetHandler(
@@ -101,7 +102,7 @@ public class ContextMenuWidget extends Widget {
 	private void createSubMenu(ContextMenuItemWidget parentWidget,
 			ContextMenuItemState childState, ContextMenuConnector connector) {
 		ContextMenuItemWidget childWidget = createEmptyItemWidget(
-				childState.caption, connector);
+				childState.id, childState.caption, connector);
 		parentWidget.addSubMenuItem(childWidget);
 
 		for (ContextMenuItemState child : childState.getChildren()) {

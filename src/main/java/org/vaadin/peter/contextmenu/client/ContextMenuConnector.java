@@ -34,7 +34,6 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	@Override
 	protected void init() {
 		widget = GWT.create(ContextMenuWidget.class);
-
 	}
 
 	@Override

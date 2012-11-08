@@ -21,6 +21,8 @@ public class ContextMenuItemWidget extends FocusWidget {
 
 	private ContextMenuWidget rootComponent;
 
+	private String id;
+
 	public ContextMenuItemWidget() {
 		root = new FlowPanel();
 		root.setStylePrimaryName("v-context-menu-item-basic");
@@ -137,6 +139,14 @@ public class ContextMenuItemWidget extends FocusWidget {
 		this.rootComponent = rootComponent;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
+	}
+
 	public void closeSiblingMenus() {
 		owner.closeSubMenus();
 	}
@@ -221,4 +231,5 @@ public class ContextMenuItemWidget extends FocusWidget {
 
 		return false;
 	}
+
 }

@@ -16,7 +16,7 @@ import com.vaadin.client.communication.RpcProxy;
 public class ContextMenuItemWidgetHandler implements ClickHandler,
 		MouseOverHandler, MouseOutHandler, KeyUpHandler {
 
-	private ContextMenuItemServerRpc contextMenuRpc;
+	private ContextMenuServerRpc contextMenuRpc;
 
 	private final Timer openTimer = new Timer() {
 		@Override
@@ -31,8 +31,7 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			ServerConnector connector) {
 		this.widget = widget;
 
-		contextMenuRpc = RpcProxy.create(ContextMenuItemServerRpc.class,
-				connector);
+		contextMenuRpc = RpcProxy.create(ContextMenuServerRpc.class, connector);
 	}
 
 	@Override
@@ -79,11 +78,11 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			if (widget.hasSubMenu()) {
 				if (!widget.isSubmenuOpen()) {
 					widget.onItemClicked();
-					contextMenuRpc.itemClicked(false);
+					contextMenuRpc.itemClicked(widget.getId(), false);
 				}
 			} else {
 				boolean menuClosed = widget.onItemClicked();
-				contextMenuRpc.itemClicked(menuClosed);
+				contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 			}
 		}
 	}
@@ -123,18 +122,18 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			if (widget.hasSubMenu()) {
 				if (!widget.isSubmenuOpen()) {
 					widget.onItemClicked();
-					contextMenuRpc.itemClicked(false);
+					contextMenuRpc.itemClicked(widget.getId(), false);
 				}
 			} else {
 				boolean menuClosed = widget.onItemClicked();
-				contextMenuRpc.itemClicked(menuClosed);
+				contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 			}
 		}
 	}
 
 	private void onItemClicked() {
 		boolean menuClosed = widget.onItemClicked();
-		contextMenuRpc.itemClicked(menuClosed);
+		contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 	}
 
 }
