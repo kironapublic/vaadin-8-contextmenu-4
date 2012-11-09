@@ -4,10 +4,14 @@ import org.vaadin.peter.contextmenu.ContextMenu;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ServerConnector;
+import com.vaadin.client.Util;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.client.ui.AbstractLayoutConnector;
@@ -23,11 +27,26 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 	private ContextMenuWidget widget;
 
-	private final ClickHandler layoutClickHandler = new ClickHandler() {
+	private Widget extensionTarget;
+
+	private final ContextMenuHandler layoutClickHandler = new ContextMenuHandler() {
 
 		@Override
-		public void onClick(ClickEvent clickEvent) {
-			showContextMenu(clickEvent.getClientX(), clickEvent.getClientY());
+		public void onContextMenu(ContextMenuEvent event) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			EventTarget eventTarget = event.getNativeEvent().getEventTarget();
+
+			Widget clickTargetWidget = Util.getConnectorForElement(
+					getConnection(),
+					getConnection().getRootConnector().getWidget(),
+					(Element) eventTarget.cast()).getWidget();
+
+			if (extensionTarget.equals(clickTargetWidget)) {
+				widget.showContextMenu(event.getNativeEvent().getClientX(),
+						event.getNativeEvent().getClientY());
+			}
 		}
 	};
 
@@ -39,10 +58,6 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	@Override
 	public ContextMenuState getState() {
 		return (ContextMenuState) super.getState();
-	}
-
-	protected void showContextMenu(int clientX, int clientY) {
-		widget.showContextMenu(clientX, clientY);
 	}
 
 	@Override
@@ -58,6 +73,9 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 	@Override
 	protected void extend(ServerConnector extensionTarget) {
+		this.extensionTarget = ((ComponentConnector) extensionTarget)
+				.getWidget();
+
 		if (extensionTarget instanceof TableConnector) {
 			extendTable(((TableConnector) extensionTarget).getWidget());
 		} else if (extensionTarget instanceof TreeConnector) {
@@ -69,7 +87,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	}
 
 	private void extendLayout(Widget widget) {
-		widget.addDomHandler(layoutClickHandler, ClickEvent.getType());
+		widget.addDomHandler(layoutClickHandler, ContextMenuEvent.getType());
 	}
 
 	private void extendTree(VTree widget) {
