@@ -10,15 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.vaadin.peter.contextmenu.client.ContextMenuClientRpc;
 import org.vaadin.peter.contextmenu.client.ContextMenuServerRpc;
 import org.vaadin.peter.contextmenu.client.ContextMenuState;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
+import com.vaadin.data.Item;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
+import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Tree;
+import com.vaadin.ui.Table.HeaderClickEvent;
+import com.vaadin.ui.Table.HeaderClickListener;
 import com.vaadin.util.ReflectTools;
 
 public class ContextMenu extends AbstractExtension {
@@ -40,7 +45,6 @@ public class ContextMenu extends AbstractExtension {
 
 	public ContextMenu() {
 		registerRpc(serverRPC);
-		getState().showing = false;
 
 		items = new HashMap<String, ContextMenu.ContextMenuItem>();
 	}
@@ -99,30 +103,59 @@ public class ContextMenu extends AbstractExtension {
 	 * Removes all items from the context menu root.
 	 */
 	public void removeAllItems() {
-		// items.clear();
+		getState().getRootItems().clear();
+		items.clear();
 	}
 
-	public void extend(Table table) {
-		super.extend(table);
+	/**
+	 * Assigns this context menu as given table's row context menu
+	 * 
+	 * @param table
+	 */
+	public void applyForTableRows(final Table table) {
+		extend(table);
+
+		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				if (event.getButton() == MouseButton.RIGHT) {
+					fireEvent(new ContextMenuOpenedOnTableRowEvent(
+							ContextMenu.this, table, event.getItem(), event
+									.getPropertyId()));
+					getRpcProxy(ContextMenuClientRpc.class).showContextMenu(
+							event.getClientX(), event.getClientY());
+				}
+			}
+		});
+
+		table.addHeaderClickListener(new HeaderClickListener() {
+
+			@Override
+			public void headerClick(HeaderClickEvent event) {
+				if (event.getButton() == MouseButton.RIGHT) {
+					fireEvent(new ContextMenuOpenedOnTableHeaderEvent(
+							ContextMenu.this, table, event.getPropertyId()));
+					getRpcProxy(ContextMenuClientRpc.class).showContextMenu(
+							event.getClientX(), event.getClientY());
+				}
+			}
+		});
 	}
 
-	public void extend(Tree tree) {
-		super.extend(tree);
-	}
-
-	public void extend(AbstractLayout layout) {
+	public void applyFor(AbstractLayout layout) {
 		super.extend(layout);
 	}
 
 	@Override
-	public ContextMenuState getState() {
+	protected ContextMenuState getState() {
 		return (ContextMenuState) super.getState();
 	}
 
 	public class ContextMenuItem {
 		private final ContextMenuItemState state;
 
-		private List<ContextMenu.ItemClickListener> clickListeners;
+		private List<ContextMenu.ContextMenuItemClickListener> clickListeners;
 
 		protected ContextMenuItem(ContextMenuItemState itemState) {
 			if (itemState == null) {
@@ -130,12 +163,12 @@ public class ContextMenu extends AbstractExtension {
 						"Context menu item state must not be null");
 			}
 
-			clickListeners = new ArrayList<ContextMenu.ItemClickListener>();
+			clickListeners = new ArrayList<ContextMenu.ContextMenuItemClickListener>();
 			this.state = itemState;
 		}
 
 		public void notifyClickListeners() {
-			for (ContextMenu.ItemClickListener clickListener : clickListeners) {
+			for (ContextMenu.ContextMenuItemClickListener clickListener : clickListeners) {
 				clickListener
 						.contextMenuItemClicked(new ContextMenuItemClickEvent(
 								this));
@@ -152,7 +185,7 @@ public class ContextMenu extends AbstractExtension {
 		}
 
 		public void addItemClickListener(
-				ContextMenu.ItemClickListener clickListener) {
+				ContextMenu.ContextMenuItemClickListener clickListener) {
 			this.clickListeners.add(clickListener);
 		}
 
@@ -179,10 +212,11 @@ public class ContextMenu extends AbstractExtension {
 	 * ContextMenuItemClickListener is listener for context menu items wanting
 	 * to notify listeners about item click
 	 */
-	public interface ItemClickListener extends EventListener, Serializable {
+	public interface ContextMenuItemClickListener extends EventListener,
+			Serializable {
 
 		public static final Method ITEM_CLICK_METHOD = ReflectTools.findMethod(
-				ItemClickListener.class, "contextMenuItemClicked",
+				ContextMenuItemClickListener.class, "contextMenuItemClicked",
 				ContextMenuItemClickEvent.class);
 
 		/**
@@ -205,12 +239,93 @@ public class ContextMenu extends AbstractExtension {
 		public ContextMenuItemClickEvent(Object component) {
 			super(component);
 		}
-
 	}
 
-	public void addItemClickListener(ContextMenu.ItemClickListener clickListener) {
+	public interface ContextMenuOpenedListener extends EventListener,
+			Serializable {
+
+		public static final Method MENU_OPENED_FROM_TABLE_ROW_METHOD = ReflectTools
+				.findMethod(ContextMenuOpenedListener.class,
+						"onContextMenuOpenFromRow",
+						ContextMenuOpenedOnTableRowEvent.class);
+
+		public static final Method MENU_OPENED_FROM_TABLE_HEADER_METHOD = ReflectTools
+				.findMethod(ContextMenuOpenedListener.class,
+						"onContextMenuOpenFromHeader",
+						ContextMenuOpenedOnTableHeaderEvent.class);
+
+		public void onContextMenuOpenFromRow(
+				ContextMenuOpenedOnTableRowEvent event);
+
+		public void onContextMenuOpenFromHeader(
+				ContextMenuOpenedOnTableHeaderEvent event);
+	}
+
+	public static class ContextMenuOpenedOnTableHeaderEvent extends EventObject {
+		private static final long serialVersionUID = -1220618848356241248L;
+
+		private Object propertyId;
+
+		private ContextMenu contextMenu;
+
+		public ContextMenuOpenedOnTableHeaderEvent(ContextMenu contextMenu,
+				Object component, Object propertyId) {
+			super(component);
+
+			this.contextMenu = contextMenu;
+			this.propertyId = propertyId;
+		}
+
+		public ContextMenu getContextMenu() {
+			return contextMenu;
+		}
+
+		public Object getPropertyId() {
+			return propertyId;
+		}
+	}
+
+	public static class ContextMenuOpenedOnTableRowEvent extends EventObject {
+		private static final long serialVersionUID = -470218301318358912L;
+
+		private ContextMenu contextMenu;
+		private Object propertyId;
+		private Item item;
+
+		public ContextMenuOpenedOnTableRowEvent(ContextMenu contextMenu,
+				Object component, Item item, Object propertyId) {
+			super(component);
+
+			this.contextMenu = contextMenu;
+			this.item = item;
+			this.propertyId = propertyId;
+		}
+
+		public ContextMenu getContextMenu() {
+			return contextMenu;
+		}
+
+		public Item getItem() {
+			return item;
+		}
+
+		public Object getPropertyId() {
+			return propertyId;
+		}
+	}
+
+	public void addItemClickListener(
+			ContextMenu.ContextMenuItemClickListener clickListener) {
 		addListener(ContextMenuItemClickEvent.class, clickListener,
-				ItemClickListener.ITEM_CLICK_METHOD);
+				ContextMenuItemClickListener.ITEM_CLICK_METHOD);
+	}
+
+	public void addContextMenuOpenListener(
+			ContextMenu.ContextMenuOpenedListener openListener) {
+		addListener(ContextMenuOpenedOnTableRowEvent.class, openListener,
+				ContextMenuOpenedListener.MENU_OPENED_FROM_TABLE_ROW_METHOD);
+		addListener(ContextMenuOpenedOnTableHeaderEvent.class, openListener,
+				ContextMenuOpenedListener.MENU_OPENED_FROM_TABLE_HEADER_METHOD);
 	}
 
 }

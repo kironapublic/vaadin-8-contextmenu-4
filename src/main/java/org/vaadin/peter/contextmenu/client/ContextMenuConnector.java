@@ -50,9 +50,18 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		}
 	};
 
+	private ContextMenuClientRpc clientRpc = new ContextMenuClientRpc() {
+
+		@Override
+		public void showContextMenu(int x, int y) {
+			widget.showContextMenu(x, y);
+		}
+	};
+
 	@Override
 	protected void init() {
 		widget = GWT.create(ContextMenuWidget.class);
+		registerRpc(ContextMenuClientRpc.class, clientRpc);
 	}
 
 	@Override
@@ -91,11 +100,10 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	}
 
 	private void extendTree(VTree widget) {
-
+		// Will be implemented when tree supports easier extension
 	}
 
 	private void extendTable(VScrollTable widget) {
-
+		// Will be implemented when table supports easier extension
 	}
-
 }

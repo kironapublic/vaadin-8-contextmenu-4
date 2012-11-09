@@ -9,11 +9,6 @@ import com.vaadin.shared.ComponentState;
 public class ContextMenuState extends ComponentState {
 	private static final long serialVersionUID = -247856391284942254L;
 
-	public int rootMenuX;
-	public int rootMenuY;
-
-	public boolean showing;
-
 	private List<ContextMenuItemState> rootItems;
 
 	public ContextMenuState() {
