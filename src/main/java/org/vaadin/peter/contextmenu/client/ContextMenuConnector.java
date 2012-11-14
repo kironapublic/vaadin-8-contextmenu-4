@@ -15,10 +15,10 @@ import com.vaadin.client.Util;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.client.ui.AbstractLayoutConnector;
+import com.vaadin.client.ui.VScrollTable;
+import com.vaadin.client.ui.VTree;
 import com.vaadin.client.ui.table.TableConnector;
-import com.vaadin.client.ui.table.VScrollTable;
 import com.vaadin.client.ui.tree.TreeConnector;
-import com.vaadin.client.ui.tree.VTree;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(ContextMenu.class)
@@ -40,7 +40,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 			Widget clickTargetWidget = Util.getConnectorForElement(
 					getConnection(),
-					getConnection().getRootConnector().getWidget(),
+					getConnection().getUIConnector().getWidget(),
 					(Element) eventTarget.cast()).getWidget();
 
 			if (extensionTarget.equals(clickTargetWidget)) {
