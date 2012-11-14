@@ -114,7 +114,7 @@ public class ContextMenu extends AbstractExtension {
 	 * 
 	 * @param table
 	 */
-	public void assignAsContextMenuOf(final Table table) {
+	public void setAsTableContextMenu(final Table table) {
 		extend(table);
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
@@ -166,6 +166,9 @@ public class ContextMenu extends AbstractExtension {
 	 * @param component
 	 */
 	public void setAsContextMenuOf(AbstractClientConnector component) {
+		if (component instanceof Table) {
+			setAsTableContextMenu((Table) component);
+		}
 		super.extend(component);
 	}
 

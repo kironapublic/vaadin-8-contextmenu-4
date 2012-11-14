@@ -77,7 +77,7 @@ public class ContextMenuUITest extends UI {
 		ContextMenu tableContextMenu = new ContextMenu();
 		tableContextMenu.addContextMenuTableListener(openListener);
 		tableContextMenu.addItem("Table test item #1");
-		tableContextMenu.assignAsContextMenuOf(table);
+		tableContextMenu.setAsTableContextMenu(table);
 
 	}
 }

@@ -68,7 +68,7 @@
 			<artifactId>vaadin-themes</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
-	
+
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -108,15 +108,17 @@
 					<archive>
 						<index>true</index>
 						<manifest>
-							<addClasspath>true</addClasspath>
+							<addClasspath>false</addClasspath>
 							<!-- Implementation-Title and Implementation-Version come from the 
 								POM by default -->
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultImplementationEntries>false</addDefaultImplementationEntries>
 						</manifest>
 						<manifestEntries>
 							<!-- Package format version - do not change -->
 							<Vaadin-Package-Version>1</Vaadin-Package-Version>
 
+							<Implementation-Title>ContextMenu</Implementation-Title>
+							<Implementation-Version>4.1.0</Implementation-Version>
 							<!-- Comma-separated list of widgetsets in the package -->
 							<!-- TODO figure out a way make this automatically configured -->
 							<Vaadin-Widgetsets>org.vaadin.peter.contextmenu.ContextmenuWidgetset</Vaadin-Widgetsets>
