@@ -14,11 +14,7 @@ import com.vaadin.client.ServerConnector;
 import com.vaadin.client.Util;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
-import com.vaadin.client.ui.AbstractLayoutConnector;
 import com.vaadin.client.ui.VScrollTable;
-import com.vaadin.client.ui.VTree;
-import com.vaadin.client.ui.table.TableConnector;
-import com.vaadin.client.ui.tree.TreeConnector;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(ContextMenu.class)
@@ -29,7 +25,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 	private Widget extensionTarget;
 
-	private final ContextMenuHandler layoutClickHandler = new ContextMenuHandler() {
+	private final ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 
 		@Override
 		public void onContextMenu(ContextMenuEvent event) {
@@ -85,25 +81,13 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		this.extensionTarget = ((ComponentConnector) extensionTarget)
 				.getWidget();
 
-		if (extensionTarget instanceof TableConnector) {
-			extendTable(((TableConnector) extensionTarget).getWidget());
-		} else if (extensionTarget instanceof TreeConnector) {
-			extendTree(((TreeConnector) extensionTarget).getWidget());
-		} else if (extensionTarget instanceof AbstractLayoutConnector) {
-			extendLayout(((AbstractLayoutConnector) extensionTarget)
-					.getWidget());
+		if (this.extensionTarget instanceof VScrollTable) {
+			// Don't extend table because table is handled by different click
+			// listeners for now
+			return;
 		}
-	}
 
-	private void extendLayout(Widget widget) {
-		widget.addDomHandler(layoutClickHandler, ContextMenuEvent.getType());
-	}
-
-	private void extendTree(VTree widget) {
-		// Will be implemented when tree supports easier extension
-	}
-
-	private void extendTable(VScrollTable widget) {
-		// Will be implemented when table supports easier extension
+		this.extensionTarget.addDomHandler(contextMenuHandler,
+				ContextMenuEvent.getType());
 	}
 }

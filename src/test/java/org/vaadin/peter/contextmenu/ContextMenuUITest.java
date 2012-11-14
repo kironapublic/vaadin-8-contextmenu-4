@@ -3,6 +3,7 @@ package org.vaadin.peter.contextmenu;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableFooterEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableHeaderEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableRowEvent;
 
@@ -23,25 +24,23 @@ public class ContextMenuUITest extends UI {
 		}
 	};
 
-	private ContextMenuOpenedListener openListener = new ContextMenuOpenedListener() {
+	private ContextMenuOpenedListener.TableListener openListener = new ContextMenuOpenedListener.TableListener() {
 
 		@Override
 		public void onContextMenuOpenFromRow(
 				ContextMenuOpenedOnTableRowEvent event) {
-			if (event.getPropertyId().equals("Name")) {
-				event.getContextMenu().removeAllItems();
-				event.getContextMenu().addItem("Change name");
-			}
 
 		}
 
 		@Override
 		public void onContextMenuOpenFromHeader(
 				ContextMenuOpenedOnTableHeaderEvent event) {
-			if (event.getPropertyId().equals("Name")) {
-				event.getContextMenu().removeAllItems();
-				event.getContextMenu().addItem("Update name column");
-			}
+
+		}
+
+		@Override
+		public void onContextMenuOpenFromFooter(
+				ContextMenuOpenedOnTableFooterEvent event) {
 
 		}
 	};
@@ -61,7 +60,7 @@ public class ContextMenuUITest extends UI {
 				.addItem("Child 2").addItemClickListener(clickListener);
 		contextMenu.addItem("Test item #2");
 
-		contextMenu.applyFor(layout);
+		contextMenu.setAsContextMenuOf(layout);
 
 		Table table = new Table();
 		table.setWidth(500, Unit.PIXELS);
@@ -76,9 +75,9 @@ public class ContextMenuUITest extends UI {
 		item.getItemProperty("Age").setValue(5);
 
 		ContextMenu tableContextMenu = new ContextMenu();
-		tableContextMenu.addContextMenuOpenListener(openListener);
+		tableContextMenu.addContextMenuTableListener(openListener);
 		tableContextMenu.addItem("Table test item #1");
-		tableContextMenu.applyForTableRows(table);
+		tableContextMenu.assignAsContextMenuOf(table);
 
 	}
 }
