@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaadin.shared.ComponentState;
+import com.vaadin.shared.AbstractComponentState;
 
-public class ContextMenuState extends ComponentState {
+public class ContextMenuState extends AbstractComponentState {
 	private static final long serialVersionUID = -247856391284942254L;
 
 	private List<ContextMenuItemState> rootItems;

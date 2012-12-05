@@ -154,7 +154,6 @@ public class ContextMenu extends AbstractExtension {
 					getRpcProxy(ContextMenuClientRpc.class).showContextMenu(
 							event.getClientX(), event.getClientY());
 				}
-
 			}
 		});
 	}
@@ -168,8 +167,9 @@ public class ContextMenu extends AbstractExtension {
 	public void setAsContextMenuOf(AbstractClientConnector component) {
 		if (component instanceof Table) {
 			setAsTableContextMenu((Table) component);
+		} else {
+			super.extend(component);
 		}
-		super.extend(component);
 	}
 
 	@Override
@@ -212,6 +212,20 @@ public class ContextMenu extends AbstractExtension {
 	}
 
 	/**
+	 * Adds listener that will be invoked when context menu is opened from the
+	 * component to which it's assigned to.
+	 * 
+	 * @param contextMenuComponentListener
+	 */
+	public void addContextMenuComponentListener(
+			ContextMenu.ContextMenuOpenedListener.ComponentListener contextMenuComponentListener) {
+		addListener(
+				ContextMenuOpenedOnComponentEvent.class,
+				contextMenuComponentListener,
+				ContextMenuOpenedListener.ComponentListener.MENU_OPENED_FROM_COMPONENT);
+	}
+
+	/**
 	 * ContextMenuItem represents one clickable item in the context menu. Item
 	 * may have sub items.
 	 * 
@@ -222,7 +236,6 @@ public class ContextMenu extends AbstractExtension {
 		private final ContextMenuItemState state;
 
 		private List<ContextMenu.ContextMenuItemClickListener> clickListeners;
-		private List<ContextMenu.ContextMenuItem> children;
 
 		protected ContextMenuItem(ContextMenuItemState itemState) {
 			if (itemState == null) {
@@ -348,13 +361,31 @@ public class ContextMenu extends AbstractExtension {
 	 */
 	public interface ContextMenuOpenedListener extends EventListener {
 
+		public interface ComponentListener extends ContextMenuOpenedListener {
+
+			public static final Method MENU_OPENED_FROM_COMPONENT = ReflectTools
+					.findMethod(
+							ContextMenuOpenedListener.ComponentListener.class,
+							"onContextMenuOpenFromComponent",
+							ContextMenuOpenedOnComponentEvent.class);
+
+			/**
+			 * Called by the context menu when it's opened by clicking on
+			 * component.
+			 * 
+			 * @param event
+			 */
+			public void onContextMenuOpenFromComponent(
+					ContextMenuOpenedOnComponentEvent event);
+		}
+
 		/**
 		 * ContextMenuOpenedListener.TableListener sub interface for table
 		 * related context menus
 		 * 
 		 * @author Peter Lehto / Vaadin Ltd
 		 */
-		public interface TableListener {
+		public interface TableListener extends ContextMenuOpenedListener {
 
 			public static final Method MENU_OPENED_FROM_TABLE_ROW_METHOD = ReflectTools
 					.findMethod(ContextMenuOpenedListener.TableListener.class,
@@ -401,6 +432,10 @@ public class ContextMenu extends AbstractExtension {
 
 	}
 
+	/**
+	 * ContextMenuOpenedOnTableHeaderEvent is an event fired by the context menu
+	 * when it's opened by clicking on table header row.
+	 */
 	public static class ContextMenuOpenedOnTableHeaderEvent extends EventObject {
 		private static final long serialVersionUID = -1220618848356241248L;
 
@@ -425,6 +460,10 @@ public class ContextMenu extends AbstractExtension {
 		}
 	}
 
+	/**
+	 * ContextMenuOpenedOnTableFooterEvent is an event that is fired by the
+	 * context menu when it's opened by clicking on table footer
+	 */
 	public static class ContextMenuOpenedOnTableFooterEvent extends EventObject {
 		private static final long serialVersionUID = 1999781663913723438L;
 
@@ -449,6 +488,10 @@ public class ContextMenu extends AbstractExtension {
 		}
 	}
 
+	/**
+	 * ContextMenuOpenedOnTableRowEvent is an event that is fired when context
+	 * menu is opened by clicking on table row.
+	 */
 	public static class ContextMenuOpenedOnTableRowEvent extends EventObject {
 		private static final long serialVersionUID = -470218301318358912L;
 
@@ -478,4 +521,37 @@ public class ContextMenu extends AbstractExtension {
 		}
 	}
 
+	/**
+	 * ContextMenuOpenedOnComponentEvent is an event fired by the context menu
+	 * when it's opened from a component
+	 * 
+	 */
+	public static class ContextMenuOpenedOnComponentEvent extends EventObject {
+		private static final long serialVersionUID = 947108059398706966L;
+
+		private ContextMenu contextMenu;
+		private Object component;
+		private Object data;
+
+		public ContextMenuOpenedOnComponentEvent(ContextMenu contextMenu,
+				Object component, Object data) {
+			super(component);
+
+			this.contextMenu = contextMenu;
+			this.component = component;
+			this.data = data;
+		}
+
+		public ContextMenu getContextMenu() {
+			return contextMenu;
+		}
+
+		public Object getComponent() {
+			return component;
+		}
+
+		public Object getData() {
+			return data;
+		}
+	}
 }

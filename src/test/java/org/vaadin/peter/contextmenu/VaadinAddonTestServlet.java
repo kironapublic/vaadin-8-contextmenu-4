@@ -37,7 +37,7 @@ public class VaadinAddonTestServlet extends VaadinServlet {
 
 		@Override
 		public Class<? extends UI> getUIClass(UIClassSelectionEvent event) {
-			String requestPathInfo = event.getRequest().getRequestPathInfo();
+			String requestPathInfo = event.getRequest().getPathInfo();
 
 			if (requestPathInfo != null && !requestPathInfo.isEmpty()) {
 				return uiToTest;
