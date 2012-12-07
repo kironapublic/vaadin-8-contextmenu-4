@@ -40,8 +40,12 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 					(Element) eventTarget.cast()).getWidget();
 
 			if (extensionTarget.equals(clickTargetWidget)) {
-				widget.showContextMenu(event.getNativeEvent().getClientX(),
-						event.getNativeEvent().getClientY());
+				if (getState().isOpenAutomatically()) {
+					widget.showContextMenu(event.getNativeEvent().getClientX(),
+							event.getNativeEvent().getClientY());
+				} else {
+
+				}
 			}
 		}
 	};

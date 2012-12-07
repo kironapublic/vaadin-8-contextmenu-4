@@ -42,12 +42,32 @@ public class ContextMenu extends AbstractExtension {
 			item.notifyClickListeners();
 			fireEvent(new ContextMenuItemClickEvent(item));
 		}
+
+		@Override
+		public void onContextMenuOpen() {
+			fireEvent(new ContextMenuOpenedOnComponentEvent(ContextMenu.this,
+					getParent(), null));
+		}
 	};
 
 	public ContextMenu() {
 		registerRpc(serverRPC);
 
 		items = new HashMap<String, ContextMenu.ContextMenuItem>();
+
+		setOpenAutomatically(true);
+	}
+
+	/**
+	 * Enables or disables open automatically feature. If open automatically is
+	 * on, it means that context menu will always be opened when it's host
+	 * component is right clicked. If automatic opening is turned off, context
+	 * menu will only open when server side open(x, y) is called.
+	 * 
+	 * @param openAutomatically
+	 */
+	public void setOpenAutomatically(boolean openAutomatically) {
+		getState().setOpenAutomatically(openAutomatically);
 	}
 
 	/**
@@ -125,8 +145,7 @@ public class ContextMenu extends AbstractExtension {
 					fireEvent(new ContextMenuOpenedOnTableRowEvent(
 							ContextMenu.this, table, event.getItem(), event
 									.getPropertyId()));
-					getRpcProxy(ContextMenuClientRpc.class).showContextMenu(
-							event.getClientX(), event.getClientY());
+					open(event.getClientX(), event.getClientY());
 				}
 			}
 		});
@@ -138,8 +157,7 @@ public class ContextMenu extends AbstractExtension {
 				if (event.getButton() == MouseButton.RIGHT) {
 					fireEvent(new ContextMenuOpenedOnTableHeaderEvent(
 							ContextMenu.this, table, event.getPropertyId()));
-					getRpcProxy(ContextMenuClientRpc.class).showContextMenu(
-							event.getClientX(), event.getClientY());
+					open(event.getClientX(), event.getClientY());
 				}
 			}
 		});
@@ -151,8 +169,7 @@ public class ContextMenu extends AbstractExtension {
 				if (event.getButton() == MouseButton.RIGHT) {
 					fireEvent(new ContextMenuOpenedOnTableHeaderEvent(
 							ContextMenu.this, table, event.getPropertyId()));
-					getRpcProxy(ContextMenuClientRpc.class).showContextMenu(
-							event.getClientX(), event.getClientY());
+					open(event.getClientX(), event.getClientY());
 				}
 			}
 		});
@@ -170,6 +187,20 @@ public class ContextMenu extends AbstractExtension {
 		} else {
 			super.extend(component);
 		}
+	}
+
+	/**
+	 * Opens the context menu to given coordinates. ContextMenu must extend
+	 * component before calling this method. This method is only intended for
+	 * opening the context menu from server side. Using this method is not
+	 * recommended and should be used only when there is no reasonable way for
+	 * listeners to detect that menu was otherwise opened.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void open(int x, int y) {
+		getRpcProxy(ContextMenuClientRpc.class).showContextMenu(x, y);
 	}
 
 	@Override

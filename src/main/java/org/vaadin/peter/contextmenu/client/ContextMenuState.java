@@ -11,6 +11,8 @@ public class ContextMenuState extends AbstractComponentState {
 
 	private List<ContextMenuItemState> rootItems;
 
+	private boolean openAutomatically;
+
 	public ContextMenuState() {
 		rootItems = new ArrayList<ContextMenuState.ContextMenuItemState>();
 	}
@@ -31,6 +33,29 @@ public class ContextMenuState extends AbstractComponentState {
 
 	public void setRootItems(List<ContextMenuItemState> rootItems) {
 		this.rootItems = rootItems;
+	}
+
+	/**
+	 * @return true if open automatically is on. If open automatically is on, it
+	 *         means that context menu will always be opened when it's host
+	 *         component is right clicked. If automatic opening is turned off,
+	 *         context menu will only open when server side open(x, y) is
+	 *         called.
+	 */
+	public boolean isOpenAutomatically() {
+		return openAutomatically;
+	}
+
+	/**
+	 * Enables or disables open automatically feature. If open automatically is
+	 * on, it means that context menu will always be opened when it's host
+	 * component is right clicked. If automatic opening is turned off, context
+	 * menu will only open when server side open(x, y) is called.
+	 * 
+	 * @param openAutomatically
+	 */
+	public void setOpenAutomatically(boolean openAutomatically) {
+		this.openAutomatically = openAutomatically;
 	}
 
 	public static class ContextMenuItemState implements Serializable {
