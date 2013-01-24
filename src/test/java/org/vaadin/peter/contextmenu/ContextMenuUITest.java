@@ -3,17 +3,23 @@ package org.vaadin.peter.contextmenu;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener.ComponentListener;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnComponentEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableFooterEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableHeaderEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableRowEvent;
 
+import com.vaadin.annotations.Theme;
 import com.vaadin.data.Item;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+@Theme("test")
 public class ContextMenuUITest extends UI {
 
 	private ContextMenuItemClickListener clickListener = new ContextMenuItemClickListener() {
@@ -61,6 +67,19 @@ public class ContextMenuUITest extends UI {
 		contextMenu.addItem("Test item #2");
 
 		contextMenu.setAsContextMenuOf(layout);
+		contextMenu.setOpenAutomatically(true);
+
+		layout.addComponent(new Label("Hello world labe!"));
+
+		contextMenu.addContextMenuComponentListener(new ComponentListener() {
+
+			@Override
+			public void onContextMenuOpenFromComponent(
+					ContextMenuOpenedOnComponentEvent event) {
+				Notification.show("Open requested at " + event.getX() + " "
+						+ event.getY() + " " + event.getComponent());
+			}
+		});
 
 		Table table = new Table();
 		table.setWidth(500, Unit.PIXELS);
@@ -76,7 +95,8 @@ public class ContextMenuUITest extends UI {
 
 		ContextMenu tableContextMenu = new ContextMenu();
 		tableContextMenu.addContextMenuTableListener(openListener);
-		tableContextMenu.addItem("Table test item #1");
+		tableContextMenu.addItem("Table test item #1").setIcon(
+				new ThemeResource("copy.png"));
 		tableContextMenu.setAsTableContextMenu(table);
 
 	}

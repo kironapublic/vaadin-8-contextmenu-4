@@ -7,6 +7,12 @@ import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.client.ui.Icon;
 
+/**
+ * ContextMenuItemWidget is client side widget that represents one menu item in
+ * context menu.
+ * 
+ * @author Peter Lehto / Vaadin Ltd
+ */
 public class ContextMenuItemWidget extends FocusWidget {
 	private final FlowPanel root;
 
@@ -17,7 +23,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 	private ContextMenuOverlay subMenu;
 
 	private ContextMenuItemWidget parentItem;
-	private ContextMenuOverlay owner;
+	private ContextMenuOverlay overlay;
 
 	private ContextMenuWidget rootComponent;
 
@@ -83,10 +89,16 @@ public class ContextMenuItemWidget extends FocusWidget {
 	 * 
 	 * @param owner
 	 */
-	public void setOwner(ContextMenuOverlay owner) {
-		this.owner = owner;
+	public void setOverlay(ContextMenuOverlay owner) {
+		this.overlay = owner;
 	}
 
+	/**
+	 * Sets parent item meaning that this item is in the sub menu of given
+	 * parent item.
+	 * 
+	 * @param parentItem
+	 */
 	public void setParentItem(ContextMenuItemWidget parentItem) {
 		this.parentItem = parentItem;
 	}
@@ -105,12 +117,21 @@ public class ContextMenuItemWidget extends FocusWidget {
 		return hasSubMenu() && subMenu.isShowing();
 	}
 
+	/**
+	 * Removes all the items from the submenu of this item. If this menu item
+	 * does not have a sub menu, this call has no effect.
+	 */
 	public void clearItems() {
 		if (hasSubMenu()) {
 			subMenu.clearItems();
 		}
 	}
 
+	/**
+	 * Adds given context menu item into the sub menu of this item.
+	 * 
+	 * @param contextMenuItem
+	 */
 	public void addSubMenuItem(ContextMenuItemWidget contextMenuItem) {
 		if (!hasSubMenu()) {
 			subMenu = new ContextMenuOverlay();
@@ -130,11 +151,6 @@ public class ContextMenuItemWidget extends FocusWidget {
 		iconContainer.getElement().appendChild(icon.getElement());
 	}
 
-	public void removeIcon() {
-		iconContainer.clear();
-		icon = null;
-	}
-
 	public void setRootComponent(ContextMenuWidget rootComponent) {
 		this.rootComponent = rootComponent;
 	}
@@ -148,18 +164,18 @@ public class ContextMenuItemWidget extends FocusWidget {
 	}
 
 	public void closeSiblingMenus() {
-		owner.closeSubMenus();
+		overlay.closeSubMenus();
 	}
 
 	protected void selectLowerSibling() {
 		setFocus(false);
-		owner.selectItemAfter(ContextMenuItemWidget.this);
+		overlay.selectItemAfter(ContextMenuItemWidget.this);
 
 	}
 
 	protected void selectUpperSibling() {
 		setFocus(false);
-		owner.selectItemBefore(ContextMenuItemWidget.this);
+		overlay.selectItemBefore(ContextMenuItemWidget.this);
 	}
 
 	protected void closeThisAndSelectParent() {
@@ -178,7 +194,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 	 */
 	protected boolean onItemClicked() {
 		if (isEnabled()) {
-			owner.closeSubMenus();
+			overlay.closeSubMenus();
 
 			if (hasSubMenu()) {
 				openSubMenu();
@@ -205,9 +221,12 @@ public class ContextMenuItemWidget extends FocusWidget {
 		}
 	}
 
+	/**
+	 * Programmatically opens the sub menu of this item.
+	 */
 	private void openSubMenu() {
 		if (isEnabled() && hasSubMenu() && !subMenu.isShowing()) {
-			owner.closeSubMenus();
+			overlay.closeSubMenus();
 
 			setFocus(false);
 			addStyleName("v-context-menu-item-basic-open");
@@ -216,8 +235,13 @@ public class ContextMenuItemWidget extends FocusWidget {
 		}
 	}
 
+	/**
+	 * @param nativeEvent
+	 * @return true if given event targets the overlay of this menu item or
+	 *         overlay of any of this item's child item.
+	 */
 	public boolean eventTargetsPopup(Event nativeEvent) {
-		if (owner.eventTargetsPopup(nativeEvent)) {
+		if (overlay.eventTargetsPopup(nativeEvent)) {
 			return true;
 		}
 
@@ -231,5 +255,4 @@ public class ContextMenuItemWidget extends FocusWidget {
 
 		return false;
 	}
-
 }

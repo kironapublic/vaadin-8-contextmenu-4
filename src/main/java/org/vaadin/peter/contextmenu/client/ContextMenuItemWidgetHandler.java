@@ -13,6 +13,13 @@ import com.google.gwt.user.client.Timer;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.communication.RpcProxy;
 
+/**
+ * ContextMenuItemWidgetHandler is context menu item specific object that
+ * handles the server communication when item is interacted with.
+ * 
+ * @author Peter Lehto / Vaadin Ltd
+ * 
+ */
 public class ContextMenuItemWidgetHandler implements ClickHandler,
 		MouseOverHandler, MouseOutHandler, KeyUpHandler {
 
@@ -88,7 +95,7 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 	}
 
 	private boolean isEnabled() {
-		return true;
+		return widget.isEnabled();
 	}
 
 	private void onLeftPressed() {

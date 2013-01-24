@@ -20,11 +20,13 @@ import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.FooterClickEvent;
 import com.vaadin.ui.Table.FooterClickListener;
 import com.vaadin.ui.Table.HeaderClickEvent;
 import com.vaadin.ui.Table.HeaderClickListener;
+import com.vaadin.ui.UI;
 import com.vaadin.util.ReflectTools;
 
 public class ContextMenu extends AbstractExtension {
@@ -44,9 +46,10 @@ public class ContextMenu extends AbstractExtension {
 		}
 
 		@Override
-		public void onContextMenuOpen() {
+		public void onContextMenuOpenRequested(int x, int y, String connectorId) {
 			fireEvent(new ContextMenuOpenedOnComponentEvent(ContextMenu.this,
-					getParent(), null));
+					x, y, (Component) UI.getCurrent().getConnectorTracker()
+							.getConnector(connectorId)));
 		}
 	};
 
@@ -58,11 +61,20 @@ public class ContextMenu extends AbstractExtension {
 		setOpenAutomatically(true);
 	}
 
+	protected String getNextId() {
+		return UUID.randomUUID().toString();
+	}
+
 	/**
 	 * Enables or disables open automatically feature. If open automatically is
 	 * on, it means that context menu will always be opened when it's host
-	 * component is right clicked. If automatic opening is turned off, context
-	 * menu will only open when server side open(x, y) is called.
+	 * component is right clicked. This will happen on client side without
+	 * server round trip. If automatic opening is turned off, context menu will
+	 * only open when server side open(x, y) is called. If automatic opening is
+	 * disabled you will need a listener implementation for context menu that is
+	 * called upon client side click event. Another option is to extend context
+	 * menu and handle the right clicking internally with case specific listener
+	 * implementation and inside it call open(x, y) method.
 	 * 
 	 * @param openAutomatically
 	 */
@@ -74,7 +86,7 @@ public class ContextMenu extends AbstractExtension {
 	 * Adds new item to context menu root with given caption.
 	 * 
 	 * @param caption
-	 * @return reference to added item
+	 * @return reference to newly added item
 	 */
 	public ContextMenuItem addItem(String caption) {
 		ContextMenuItemState itemState = getState().addChild(caption,
@@ -86,18 +98,16 @@ public class ContextMenu extends AbstractExtension {
 		return item;
 	}
 
-	protected String getNextId() {
-		return UUID.randomUUID().toString();
-	}
-
 	/**
 	 * Adds new item to context menu root with given icon without caption.
 	 * 
 	 * @param icon
-	 * @return reference to added item
+	 * @return reference to newly added item
 	 */
 	public ContextMenuItem addItem(Resource icon) {
-		return null;
+		ContextMenuItem item = addItem("");
+		item.setIcon(icon);
+		return item;
 	}
 
 	/**
@@ -105,10 +115,12 @@ public class ContextMenu extends AbstractExtension {
 	 * 
 	 * @param caption
 	 * @param icon
-	 * @return reference to added item
+	 * @return reference to newly added item
 	 */
 	public ContextMenuItem addItem(String caption, Resource icon) {
-		return addItem(caption);
+		ContextMenuItem item = addItem(caption);
+		item.setIcon(icon);
+		return item;
 	}
 
 	/**
@@ -268,6 +280,8 @@ public class ContextMenu extends AbstractExtension {
 
 		private List<ContextMenu.ContextMenuItemClickListener> clickListeners;
 
+		private Object data;
+
 		protected ContextMenuItem(ContextMenuItemState itemState) {
 			if (itemState == null) {
 				throw new NullPointerException(
@@ -287,7 +301,24 @@ public class ContextMenu extends AbstractExtension {
 		}
 
 		/**
-		 * Adds new item to context menu with given caption
+		 * Associates given object with this menu item. Given object can be
+		 * whatever application specific if necessary.
+		 * 
+		 * @param data
+		 */
+		public void setData(Object data) {
+			this.data = data;
+		}
+
+		/**
+		 * @return Object associated with ContextMenuItem.
+		 */
+		public Object getData() {
+			return data;
+		}
+
+		/**
+		 * Adds new item as this item's sub item with given caption
 		 * 
 		 * @param caption
 		 * @return reference to newly created item.
@@ -300,6 +331,49 @@ public class ContextMenu extends AbstractExtension {
 			items.put(childItemState.id, item);
 			markAsDirty();
 			return item;
+		}
+
+		/**
+		 * Adds new item as this item's sub item with given icon
+		 * 
+		 * @param icon
+		 * @return reference to newly added item
+		 */
+		public ContextMenuItem addItem(Resource icon) {
+			ContextMenuItem item = this.addItem("");
+			item.setIcon(icon);
+
+			return item;
+		}
+
+		/**
+		 * Adds new item as this item's sub item with given caption and icon
+		 * 
+		 * @param caption
+		 * @param icon
+		 * @return reference to newly added item
+		 */
+		public ContextMenuItem addItem(String caption, Resource icon) {
+			ContextMenuItem item = this.addItem(caption);
+			item.setIcon(icon);
+
+			return item;
+		}
+
+		/**
+		 * Sets given resource as icon of this menu item.
+		 * 
+		 * @param icon
+		 */
+		public void setIcon(Resource icon) {
+			setResource(state.id, icon);
+		}
+
+		/**
+		 * @return current icon
+		 */
+		public Resource getIcon() {
+			return getResource(state.id);
 		}
 
 		/**
@@ -333,7 +407,7 @@ public class ContextMenu extends AbstractExtension {
 
 		@Override
 		public boolean equals(Object other) {
-			if (other == this) {
+			if (this == other) {
 				return true;
 			}
 
@@ -560,29 +634,36 @@ public class ContextMenu extends AbstractExtension {
 	public static class ContextMenuOpenedOnComponentEvent extends EventObject {
 		private static final long serialVersionUID = 947108059398706966L;
 
-		private ContextMenu contextMenu;
-		private Object component;
-		private Object data;
+		private final ContextMenu contextMenu;
+		private final Component component;
+
+		private final int x;
+		private final int y;
 
 		public ContextMenuOpenedOnComponentEvent(ContextMenu contextMenu,
-				Object component, Object data) {
+				int x, int y, Component component) {
 			super(component);
 
 			this.contextMenu = contextMenu;
+			this.x = x;
+			this.y = y;
 			this.component = component;
-			this.data = data;
 		}
 
 		public ContextMenu getContextMenu() {
 			return contextMenu;
 		}
 
-		public Object getComponent() {
+		public Component getComponent() {
 			return component;
 		}
 
-		public Object getData() {
-			return data;
+		public int getX() {
+			return x;
+		}
+
+		public int getY() {
+			return y;
 		}
 	}
 }

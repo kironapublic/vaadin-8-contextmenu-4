@@ -12,11 +12,21 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.Util;
+import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.client.ui.VScrollTable;
 import com.vaadin.shared.ui.Connect;
 
+/**
+ * ContextMenuConnector is client side object that receives updates from server
+ * and passes them to context menu client side widget. Connector is also
+ * responsible for handling user interaction and communicating it back to
+ * server.
+ * 
+ * @author Peter Lehto / Vaadin Ltd
+ * 
+ */
 @Connect(ContextMenu.class)
 public class ContextMenuConnector extends AbstractExtensionConnector {
 	private static final long serialVersionUID = 3830712282306785118L;
@@ -24,6 +34,9 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	private ContextMenuWidget widget;
 
 	private Widget extensionTarget;
+
+	private ContextMenuServerRpc clientToServerRPC = RpcProxy.create(
+			ContextMenuServerRpc.class, this);
 
 	private final ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 
@@ -34,23 +47,27 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 			EventTarget eventTarget = event.getNativeEvent().getEventTarget();
 
-			Widget clickTargetWidget = Util.getConnectorForElement(
-					getConnection(),
-					getConnection().getUIConnector().getWidget(),
-					(Element) eventTarget.cast()).getWidget();
+			ComponentConnector connector = Util.getConnectorForElement(
+					getConnection(), getConnection().getUIConnector()
+							.getWidget(), (Element) eventTarget.cast());
+			Widget clickTargetWidget = connector.getWidget();
 
 			if (extensionTarget.equals(clickTargetWidget)) {
 				if (getState().isOpenAutomatically()) {
 					widget.showContextMenu(event.getNativeEvent().getClientX(),
 							event.getNativeEvent().getClientY());
 				} else {
-
+					clientToServerRPC.onContextMenuOpenRequested(event
+							.getNativeEvent().getClientX(), event
+							.getNativeEvent().getClientY(), connector
+							.getConnectorId());
 				}
 			}
 		}
 	};
 
-	private ContextMenuClientRpc clientRpc = new ContextMenuClientRpc() {
+	@SuppressWarnings("serial")
+	private ContextMenuClientRpc serverToClientRPC = new ContextMenuClientRpc() {
 
 		@Override
 		public void showContextMenu(int x, int y) {
@@ -61,7 +78,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	@Override
 	protected void init() {
 		widget = GWT.create(ContextMenuWidget.class);
-		registerRpc(ContextMenuClientRpc.class, clientRpc);
+		registerRpc(ContextMenuClientRpc.class, serverToClientRPC);
 	}
 
 	@Override

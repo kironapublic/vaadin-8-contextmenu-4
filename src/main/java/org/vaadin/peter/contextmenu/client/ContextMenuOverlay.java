@@ -169,7 +169,7 @@ class ContextMenuOverlay extends VOverlay {
 	}
 
 	public void addMenuItem(ContextMenuItemWidget menuItem) {
-		menuItem.setOwner(this);
+		menuItem.setOverlay(this);
 
 		menuItems.add(menuItem);
 		root.add(menuItem);

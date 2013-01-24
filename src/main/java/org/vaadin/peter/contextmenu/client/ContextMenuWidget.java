@@ -11,6 +11,7 @@ import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ui.Icon;
 
 /**
  * Client side implementation for ContextMenu component
@@ -70,6 +71,12 @@ public class ContextMenuWidget extends Widget {
 		menuOverlay.hide();
 	}
 
+	/**
+	 * Adds new item as context menu root item.
+	 * 
+	 * @param rootItem
+	 * @param connector
+	 */
 	public void addRootMenuItem(ContextMenuItemState rootItem,
 			ContextMenuConnector connector) {
 		ContextMenuItemWidget itemWidget = createEmptyItemWidget(rootItem.id,
@@ -82,11 +89,24 @@ public class ContextMenuWidget extends Widget {
 		}
 	}
 
+	/**
+	 * Creates new empty menu item
+	 * 
+	 * @param id
+	 * @param caption
+	 * @param contextMenuConnector
+	 * @return
+	 */
 	private ContextMenuItemWidget createEmptyItemWidget(String id,
 			String caption, ContextMenuConnector contextMenuConnector) {
 		ContextMenuItemWidget widget = GWT.create(ContextMenuItemWidget.class);
 		widget.setId(id);
 		widget.setCaption(caption);
+
+		if (hasIcon(id, contextMenuConnector)) {
+			widget.setIcon(new Icon(contextMenuConnector.getConnection(),
+					contextMenuConnector.getResourceUrl(id)));
+		}
 
 		ContextMenuItemWidgetHandler handler = new ContextMenuItemWidgetHandler(
 				widget, contextMenuConnector);
@@ -97,6 +117,10 @@ public class ContextMenuWidget extends Widget {
 		widget.setRootComponent(this);
 
 		return widget;
+	}
+
+	private boolean hasIcon(String id, ContextMenuConnector contextMenuConnector) {
+		return contextMenuConnector.getResourceUrl(id) != null;
 	}
 
 	private void createSubMenu(ContextMenuItemWidget parentWidget,

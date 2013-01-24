@@ -17,6 +17,14 @@ public interface ContextMenuServerRpc extends ServerRpc {
 
 	/**
 	 * Called by the client side when context menu is about to be opened.
+	 * 
+	 * @param x
+	 *            mouse x coordinate
+	 * @param y
+	 *            mouse y coordinate
+	 * @param connectorIdOfComponent
+	 *            component connector id on which the click was made.
 	 */
-	public void onContextMenuOpen();
+	public void onContextMenuOpenRequested(int x, int y,
+			String connectorIdOfComponent);
 }
