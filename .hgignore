@@ -11,3 +11,5 @@ syntax: regexp
 ^src/main/webapp/VAADIN/gwt-unitCache$
 syntax: regexp
 ^src/main/webapp/VAADIN/widgetsets$
+syntax: regexp
+^WebContent/VAADIN/widgetsets/org\.vaadin\.peter\.contextmenu\.ContextmenuWidgetset$

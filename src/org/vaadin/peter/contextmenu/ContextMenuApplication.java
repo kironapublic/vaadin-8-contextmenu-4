@@ -20,7 +20,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @Theme("test")
-public class ContextMenuUITest extends UI {
+public class ContextMenuApplication extends UI {
 
 	private ContextMenuItemClickListener clickListener = new ContextMenuItemClickListener() {
 
