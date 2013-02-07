@@ -16,6 +16,7 @@ import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.client.ui.VScrollTable;
+import com.vaadin.client.ui.VTree;
 import com.vaadin.shared.ui.Connect;
 
 /**
@@ -102,9 +103,12 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		this.extensionTarget = ((ComponentConnector) extensionTarget)
 				.getWidget();
 
+		// Table and Tree are currently handled with their internal
+		// ItemClickListeners as their current implementations are not too
+		// extension friendly.
 		if (this.extensionTarget instanceof VScrollTable) {
-			// Don't extend table because table is handled by different click
-			// listeners for now
+			return;
+		} else if (this.extensionTarget instanceof VTree) {
 			return;
 		}
 

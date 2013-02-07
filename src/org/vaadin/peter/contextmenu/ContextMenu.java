@@ -14,8 +14,8 @@ import org.vaadin.peter.contextmenu.client.ContextMenuServerRpc;
 import org.vaadin.peter.contextmenu.client.ContextMenuState;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
-import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
@@ -26,6 +26,7 @@ import com.vaadin.ui.Table.FooterClickEvent;
 import com.vaadin.ui.Table.FooterClickListener;
 import com.vaadin.ui.Table.HeaderClickEvent;
 import com.vaadin.ui.Table.HeaderClickListener;
+import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.util.ReflectTools;
 
@@ -150,12 +151,13 @@ public class ContextMenu extends AbstractExtension {
 		extend(table);
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+			private static final long serialVersionUID = -348059189217149508L;
 
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				if (event.getButton() == MouseButton.RIGHT) {
 					fireEvent(new ContextMenuOpenedOnTableRowEvent(
-							ContextMenu.this, table, event.getItem(), event
+							ContextMenu.this, table, event.getItemId(), event
 									.getPropertyId()));
 					open(event.getClientX(), event.getClientY());
 				}
@@ -163,6 +165,7 @@ public class ContextMenu extends AbstractExtension {
 		});
 
 		table.addHeaderClickListener(new HeaderClickListener() {
+			private static final long serialVersionUID = -5880755689414670581L;
 
 			@Override
 			public void headerClick(HeaderClickEvent event) {
@@ -175,12 +178,35 @@ public class ContextMenu extends AbstractExtension {
 		});
 
 		table.addFooterClickListener(new FooterClickListener() {
+			private static final long serialVersionUID = 2884227013964132482L;
 
 			@Override
 			public void footerClick(FooterClickEvent event) {
 				if (event.getButton() == MouseButton.RIGHT) {
 					fireEvent(new ContextMenuOpenedOnTableHeaderEvent(
 							ContextMenu.this, table, event.getPropertyId()));
+					open(event.getClientX(), event.getClientY());
+				}
+			}
+		});
+	}
+
+	/**
+	 * Assigns this as context menu of given tree.
+	 * 
+	 * @param tree
+	 */
+	public void setAsTreeContextMenu(final Tree tree) {
+		extend(tree);
+
+		tree.addItemClickListener(new ItemClickListener() {
+			private static final long serialVersionUID = 338499886052623304L;
+
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				if (event.getButton() == MouseButton.RIGHT) {
+					fireEvent(new ContextMenuOpenedOnTreeItemEvent(
+							ContextMenu.this, tree, event.getItemId()));
 					open(event.getClientX(), event.getClientY());
 				}
 			}
@@ -196,6 +222,8 @@ public class ContextMenu extends AbstractExtension {
 	public void setAsContextMenuOf(AbstractClientConnector component) {
 		if (component instanceof Table) {
 			setAsTableContextMenu((Table) component);
+		} else if (component instanceof Tree) {
+			setAsTreeContextMenu((Tree) component);
 		} else {
 			super.extend(component);
 		}
@@ -252,6 +280,20 @@ public class ContextMenu extends AbstractExtension {
 				ContextMenuOpenedOnTableFooterEvent.class,
 				contextMenuTableListener,
 				ContextMenuOpenedListener.TableListener.MENU_OPENED_FROM_TABLE_FOOTER_METHOD);
+	}
+
+	/**
+	 * Adds listener that will be invoked when context menu is openef from
+	 * com.vaadin.ui.Tree component.
+	 * 
+	 * @param contextMenuTreeListener
+	 */
+	public void addContextMenuTreeListener(
+			ContextMenu.ContextMenuOpenedListener.TreeListener contextMenuTreeListener) {
+		addListener(
+				ContextMenuOpenedOnTreeItemEvent.class,
+				contextMenuTreeListener,
+				ContextMenuOpenedListener.TreeListener.MENU_OPENED_FROM_TREE_ITEM_METHOD);
 	}
 
 	/**
@@ -535,6 +577,49 @@ public class ContextMenu extends AbstractExtension {
 					ContextMenuOpenedOnTableFooterEvent event);
 		}
 
+		public interface TreeListener extends ContextMenuOpenedListener {
+			public static final Method MENU_OPENED_FROM_TREE_ITEM_METHOD = ReflectTools
+					.findMethod(ContextMenuOpenedListener.TreeListener.class,
+							"onContextMenuOpenFromTreeItem",
+							ContextMenuOpenedOnTreeItemEvent.class);
+
+			/**
+			 * Called by the context menu when it's opened by clicking item on a
+			 * tree.
+			 * 
+			 * @param event
+			 */
+			public void onContextMenuOpenFromTreeItem(
+					ContextMenuOpenedOnTreeItemEvent event);
+		}
+
+	}
+
+	/**
+	 * ContextMenuOpenedOnTreeItemEvent is an event fired by the context menu
+	 * when it's opened by clicking on tree item.
+	 */
+	public static class ContextMenuOpenedOnTreeItemEvent extends EventObject {
+		private static final long serialVersionUID = -7705205542849351984L;
+
+		private Object itemId;
+		private ContextMenu contextMenu;
+
+		public ContextMenuOpenedOnTreeItemEvent(ContextMenu contextMenu,
+				Tree tree, Object itemId) {
+			super(tree);
+
+			this.contextMenu = contextMenu;
+			this.itemId = itemId;
+		}
+
+		public ContextMenu getContextMenu() {
+			return contextMenu;
+		}
+
+		public Object getItemId() {
+			return itemId;
+		}
 	}
 
 	/**
@@ -549,8 +634,8 @@ public class ContextMenu extends AbstractExtension {
 		private ContextMenu contextMenu;
 
 		public ContextMenuOpenedOnTableHeaderEvent(ContextMenu contextMenu,
-				Object component, Object propertyId) {
-			super(component);
+				Table source, Object propertyId) {
+			super(source);
 
 			this.contextMenu = contextMenu;
 			this.propertyId = propertyId;
@@ -577,8 +662,8 @@ public class ContextMenu extends AbstractExtension {
 		private ContextMenu contextMenu;
 
 		public ContextMenuOpenedOnTableFooterEvent(ContextMenu contextMenu,
-				Object component, Object propertyId) {
-			super(component);
+				Table source, Object propertyId) {
+			super(source);
 
 			this.contextMenu = contextMenu;
 			this.propertyId = propertyId;
@@ -602,14 +687,14 @@ public class ContextMenu extends AbstractExtension {
 
 		private ContextMenu contextMenu;
 		private Object propertyId;
-		private Item item;
+		private Object itemId;
 
 		public ContextMenuOpenedOnTableRowEvent(ContextMenu contextMenu,
-				Object component, Item item, Object propertyId) {
-			super(component);
+				Table table, Object itemId, Object propertyId) {
+			super(table);
 
 			this.contextMenu = contextMenu;
-			this.item = item;
+			this.itemId = itemId;
 			this.propertyId = propertyId;
 		}
 
@@ -617,8 +702,8 @@ public class ContextMenu extends AbstractExtension {
 			return contextMenu;
 		}
 
-		public Item getItem() {
-			return item;
+		public Object getItemId() {
+			return itemId;
 		}
 
 		public Object getPropertyId() {
@@ -635,7 +720,6 @@ public class ContextMenu extends AbstractExtension {
 		private static final long serialVersionUID = 947108059398706966L;
 
 		private final ContextMenu contextMenu;
-		private final Component component;
 
 		private final int x;
 		private final int y;
@@ -647,21 +731,25 @@ public class ContextMenu extends AbstractExtension {
 			this.contextMenu = contextMenu;
 			this.x = x;
 			this.y = y;
-			this.component = component;
 		}
 
+		/**
+		 * @return ContextMenu that was opened.
+		 */
 		public ContextMenu getContextMenu() {
 			return contextMenu;
 		}
 
-		public Component getComponent() {
-			return component;
-		}
-
+		/**
+		 * @return x-coordinate of open position.
+		 */
 		public int getX() {
 			return x;
 		}
 
+		/**
+		 * @return y-coordinate of open position.
+		 */
 		public int getY() {
 			return y;
 		}
