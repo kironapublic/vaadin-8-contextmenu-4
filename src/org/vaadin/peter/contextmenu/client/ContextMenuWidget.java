@@ -1,6 +1,9 @@
 package org.vaadin.peter.contextmenu.client;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.vaadin.client.communication.RpcProxy;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.google.gwt.core.client.GWT;
@@ -145,4 +148,13 @@ public class ContextMenuWidget extends Widget {
 
 		menuOverlay.showAt(rootMenuX, rootMenuY);
 	}
+
+    public void initRoot(final ContextMenuConnector connector) {
+        menuOverlay.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+                RpcProxy.create(ContextMenuServerRpc.class, connector).contextMenuClosed();
+            }
+        });
+    }
 }
