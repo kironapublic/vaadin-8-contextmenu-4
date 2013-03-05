@@ -1,5 +1,6 @@
 package org.vaadin.peter.contextmenu.client;
 
+import com.google.gwt.user.client.ui.PopupPanel;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.google.gwt.core.client.GWT;
@@ -142,9 +143,6 @@ public class ContextMenuWidget extends Widget {
 		rootMenuX += Window.getScrollLeft();
 		rootMenuY += Window.getScrollTop();
 
-		menuOverlay.setPopupPosition(rootMenuX, rootMenuY);
-		menuOverlay.show();
-
-		menuOverlay.normalizeItemWidths();
+		menuOverlay.showAt(rootMenuX, rootMenuY);
 	}
 }
