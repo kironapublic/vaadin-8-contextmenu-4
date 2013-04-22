@@ -38,8 +38,7 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			ServerConnector connector) {
 		this.widget = widget;
 
-		contextMenuRpc = RpcProxy.create(ContextMenuServerRpc.class,
-				connector);
+		contextMenuRpc = RpcProxy.create(ContextMenuServerRpc.class, connector);
 	}
 
 	@Override
@@ -62,9 +61,7 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		openTimer.cancel();
-		// if (!widget.isSubmenuOpen()) {
 		widget.setFocus(false);
-		// }
 	}
 
 	@Override
@@ -75,7 +72,6 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			if (!widget.isSubmenuOpen()) {
 				widget.closeSiblingMenus();
 			}
-
 			widget.setFocus(true);
 
 			if (widget.hasSubMenu() && !widget.isSubmenuOpen()) {
@@ -92,13 +88,11 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			if (widget.hasSubMenu()) {
 				if (!widget.isSubmenuOpen()) {
 					widget.onItemClicked();
-					contextMenuRpc.itemClicked(
-							widget.getId(), false);
+					contextMenuRpc.itemClicked(widget.getId(), false);
 				}
 			} else {
 				boolean menuClosed = widget.onItemClicked();
-				contextMenuRpc.itemClicked(widget.getId(),
-						menuClosed);
+				contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 			}
 		}
 	}
@@ -138,13 +132,11 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 			if (widget.hasSubMenu()) {
 				if (!widget.isSubmenuOpen()) {
 					widget.onItemClicked();
-					contextMenuRpc.itemClicked(
-							widget.getId(), false);
+					contextMenuRpc.itemClicked(widget.getId(), false);
 				}
 			} else {
 				boolean menuClosed = widget.onItemClicked();
-				contextMenuRpc.itemClicked(widget.getId(),
-						menuClosed);
+				contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 			}
 		}
 	}
