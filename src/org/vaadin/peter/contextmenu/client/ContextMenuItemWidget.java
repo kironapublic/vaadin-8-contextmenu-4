@@ -78,8 +78,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 	}
 
 	/**
-	 * @return true if this item is an item in the root menu, false
-	 *         otherwise
+	 * @return true if this item is an item in the root menu, false otherwise
 	 */
 	public boolean isRootItem() {
 		return parentItem == null;
@@ -91,7 +90,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 	 * @param owner
 	 */
 	public void setOverlay(ContextMenuOverlay owner) {
-		overlay = owner;
+		this.overlay = owner;
 	}
 
 	/**
@@ -119,8 +118,8 @@ public class ContextMenuItemWidget extends FocusWidget {
 	}
 
 	/**
-	 * Removes all the items from the submenu of this item. If this menu
-	 * item does not have a sub menu, this call has no effect.
+	 * Removes all the items from the submenu of this item. If this menu item
+	 * does not have a sub menu, this call has no effect.
 	 */
 	public void clearItems() {
 		if (hasSubMenu()) {
@@ -191,8 +190,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 	 * Called when context menu item is clicked or is focused and enter is
 	 * pressed.
 	 * 
-	 * @return true if context menu was closed after the click, false
-	 *         otherwise
+	 * @return true if context menu was closed after the click, false otherwise
 	 */
 	protected boolean onItemClicked() {
 		if (isEnabled()) {
@@ -233,7 +231,6 @@ public class ContextMenuItemWidget extends FocusWidget {
 			setFocus(false);
 			addStyleName("v-context-menu-item-basic-open");
 			subMenu.openNextTo(this);
-			// subMenu.setFocus(true);
 		}
 	}
 
@@ -248,8 +245,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 		}
 
 		if (hasSubMenu()) {
-			for (ContextMenuItemWidget item : subMenu
-					.getMenuItems()) {
+			for (ContextMenuItemWidget item : subMenu.getMenuItems()) {
 				if (item.eventTargetsPopup(nativeEvent)) {
 					return true;
 				}

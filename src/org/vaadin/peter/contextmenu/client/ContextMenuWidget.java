@@ -26,8 +26,7 @@ public class ContextMenuWidget extends Widget {
 		@Override
 		public void onPreviewNativeEvent(NativePreviewEvent event) {
 			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-				// Always close the context menu on esc, no
-				// matter the focus
+				// Always close the context menu on esc, no matter the focus
 				hide();
 			}
 
@@ -80,11 +79,11 @@ public class ContextMenuWidget extends Widget {
 	 */
 	public void addRootMenuItem(ContextMenuItemState rootItem,
 			ContextMenuConnector connector) {
-		ContextMenuItemWidget itemWidget = createEmptyItemWidget(
-				rootItem.id, rootItem.caption, connector);
+		ContextMenuItemWidget itemWidget = createEmptyItemWidget(rootItem.id,
+				rootItem.caption, connector);
 		itemWidget.setEnabled(rootItem.enabled);
 		itemWidget.setSeparatorVisible(rootItem.separator);
-
+		
 		menuOverlay.addMenuItem(itemWidget);
 
 		for (ContextMenuItemState childState : rootItem.getChildren()) {
@@ -101,17 +100,14 @@ public class ContextMenuWidget extends Widget {
 	 * @return
 	 */
 	private ContextMenuItemWidget createEmptyItemWidget(String id,
-			String caption,
-			ContextMenuConnector contextMenuConnector) {
-		ContextMenuItemWidget widget = GWT
-				.create(ContextMenuItemWidget.class);
+			String caption, ContextMenuConnector contextMenuConnector) {
+		ContextMenuItemWidget widget = GWT.create(ContextMenuItemWidget.class);
 		widget.setId(id);
 		widget.setCaption(caption);
 
 		if (hasIcon(id, contextMenuConnector)) {
-			widget.setIcon(new Icon(contextMenuConnector
-					.getConnection(), contextMenuConnector
-					.getResourceUrl(id)));
+			widget.setIcon(new Icon(contextMenuConnector.getConnection(),
+					contextMenuConnector.getResourceUrl(id)));
 		}
 
 		ContextMenuItemWidgetHandler handler = new ContextMenuItemWidgetHandler(
@@ -125,20 +121,16 @@ public class ContextMenuWidget extends Widget {
 		return widget;
 	}
 
-	private boolean hasIcon(String id,
-			ContextMenuConnector contextMenuConnector) {
+	private boolean hasIcon(String id, ContextMenuConnector contextMenuConnector) {
 		return contextMenuConnector.getResourceUrl(id) != null;
 	}
 
 	private void createSubMenu(ContextMenuItemWidget parentWidget,
-			ContextMenuItemState childState,
-			ContextMenuConnector connector) {
+			ContextMenuItemState childState, ContextMenuConnector connector) {
 		ContextMenuItemWidget childWidget = createEmptyItemWidget(
 				childState.id, childState.caption, connector);
-
 		childWidget.setEnabled(childState.enabled);
 		childWidget.setSeparatorVisible(childState.separator);
-
 		parentWidget.addSubMenuItem(childWidget);
 
 		for (ContextMenuItemState child : childState.getChildren()) {
