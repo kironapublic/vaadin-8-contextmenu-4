@@ -1,5 +1,6 @@
 package org.vaadin.peter.contextmenu;
 
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
@@ -28,7 +29,8 @@ public class ContextMenuApplication extends UI {
 	private ContextMenuItemClickListener clickListener = new ContextMenuItemClickListener() {
 
 		@Override
-		public void contextMenuItemClicked(ContextMenuItemClickEvent event) {
+		public void contextMenuItemClicked(
+				ContextMenuItemClickEvent event) {
 			Notification.show(event.getSource().toString());
 		}
 	};
@@ -38,20 +40,23 @@ public class ContextMenuApplication extends UI {
 		@Override
 		public void onContextMenuOpenFromRow(
 				ContextMenuOpenedOnTableRowEvent event) {
-			Notification.show("Table item clicked " + event.getItemId() + " "
+			Notification.show("Table item clicked "
+					+ event.getItemId() + " "
 					+ event.getPropertyId());
 		}
 
 		@Override
 		public void onContextMenuOpenFromHeader(
 				ContextMenuOpenedOnTableHeaderEvent event) {
-			Notification.show("Table header clicked " + event.getPropertyId());
+			Notification.show("Table header clicked "
+					+ event.getPropertyId());
 		}
 
 		@Override
 		public void onContextMenuOpenFromFooter(
 				ContextMenuOpenedOnTableFooterEvent event) {
-			Notification.show("Table footer clicked " + event.getPropertyId());
+			Notification.show("Table footer clicked "
+					+ event.getPropertyId());
 		}
 	};
 
@@ -60,7 +65,8 @@ public class ContextMenuApplication extends UI {
 		@Override
 		public void onContextMenuOpenFromTreeItem(
 				ContextMenuOpenedOnTreeItemEvent event) {
-			Notification.show("Tree item clicked " + event.getItemId());
+			Notification.show("Tree item clicked "
+					+ event.getItemId());
 		}
 	};
 
@@ -74,7 +80,8 @@ public class ContextMenuApplication extends UI {
 		final ContextMenu contextMenu = new ContextMenu();
 
 		contextMenu.addItem("Test item #1").addItem("Child #1")
-				.addItem("Child 2").addItemClickListener(clickListener);
+				.addItem("Child 2")
+				.addItemClickListener(clickListener);
 		contextMenu.addItem("Test item #2");
 
 		contextMenu.setAsContextMenuOf(layout);
@@ -87,20 +94,26 @@ public class ContextMenuApplication extends UI {
 			@Override
 			public void onContextMenuOpenFromComponent(
 					ContextMenuOpenedOnComponentEvent event) {
-				Notification.show("Open requested at " + event.getX() + " "
-						+ event.getY() + " " + event.getSource());
+				Notification.show("Open requested at "
+						+ event.getX() + " "
+						+ event.getY() + " "
+						+ event.getSource());
 
-				// If set open automatically was true, this listener wouldn't be
-				// called and context menu would be opened on client side
-				// without server round trip. When set automatically is false
-				// developer may affect contents of the menu before opening it.
+				// If set open automatically was true, this
+				// listener wouldn't be
+				// called and context menu would be opened on
+				// client side
+				// without server round trip. When set
+				// automatically is false
+				// developer may affect contents of the menu
+				// before opening it.
 				contextMenu.open(event.getX(), event.getY());
 			}
 		});
 
 		Table table = new Table();
 		table.setWidth(500, Unit.PIXELS);
-		table.setHeight(500, Unit.PIXELS);
+		table.setHeight(200, Unit.PIXELS);
 		layout.addComponent(table);
 
 		table.addContainerProperty("Name", String.class, null);
@@ -130,8 +143,12 @@ public class ContextMenuApplication extends UI {
 
 		ContextMenu treeContextMenu = new ContextMenu();
 		treeContextMenu.addContextMenuTreeListener(treeItemListener);
-		treeContextMenu.addItem("Tree test item #1");
-		treeContextMenu.addItem("Tree test item #2");
+		ContextMenuItem addItem = treeContextMenu
+				.addItem("Tree test item #1");
+		addItem.setSeparatorVisible(true);
+		addItem.addItemClickListener(clickListener);
+		addItem = treeContextMenu.addItem("Tree test item #2");
+		addItem.setEnabled(false);
 		treeContextMenu.setAsTreeContextMenu(tree);
 
 		layout.addComponent(tree);

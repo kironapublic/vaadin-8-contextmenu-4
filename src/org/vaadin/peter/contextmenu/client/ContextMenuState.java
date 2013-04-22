@@ -36,21 +36,21 @@ public class ContextMenuState extends AbstractComponentState {
 	}
 
 	/**
-	 * @return true if open automatically is on. If open automatically is on, it
-	 *         means that context menu will always be opened when it's host
-	 *         component is right clicked. If automatic opening is turned off,
-	 *         context menu will only open when server side open(x, y) is
-	 *         called.
+	 * @return true if open automatically is on. If open automatically is
+	 *         on, it means that context menu will always be opened when
+	 *         it's host component is right clicked. If automatic opening is
+	 *         turned off, context menu will only open when server side
+	 *         open(x, y) is called.
 	 */
 	public boolean isOpenAutomatically() {
 		return openAutomatically;
 	}
 
 	/**
-	 * Enables or disables open automatically feature. If open automatically is
-	 * on, it means that context menu will always be opened when it's host
-	 * component is right clicked. If automatic opening is turned off, context
-	 * menu will only open when server side open(x, y) is called.
+	 * Enables or disables open automatically feature. If open automatically
+	 * is on, it means that context menu will always be opened when it's
+	 * host component is right clicked. If automatic opening is turned off,
+	 * context menu will only open when server side open(x, y) is called.
 	 * 
 	 * @param openAutomatically
 	 */
@@ -66,6 +66,10 @@ public class ContextMenuState extends AbstractComponentState {
 		public String caption;
 
 		public String id;
+
+		public boolean separator;
+
+		public boolean enabled = true;
 
 		public ContextMenuItemState() {
 			children = new ArrayList<ContextMenuState.ContextMenuItemState>();
