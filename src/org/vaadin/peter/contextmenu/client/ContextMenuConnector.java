@@ -7,7 +7,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ServerConnector;
@@ -39,6 +42,13 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	private ContextMenuServerRpc clientToServerRPC = RpcProxy.create(
 			ContextMenuServerRpc.class, this);
 
+	private CloseHandler<PopupPanel> contextMenuCloseHandler = new CloseHandler<PopupPanel>() {
+		@Override
+		public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+			clientToServerRPC.contextMenuClosed();
+		}
+	};
+
 	private final ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 
 		@Override
@@ -51,6 +61,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 			ComponentConnector connector = Util.getConnectorForElement(
 					getConnection(), getConnection().getUIConnector()
 							.getWidget(), (Element) eventTarget.cast());
+
 			Widget clickTargetWidget = connector.getWidget();
 
 			if (extensionTarget.equals(clickTargetWidget)) {
@@ -79,7 +90,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	@Override
 	protected void init() {
 		widget = GWT.create(ContextMenuWidget.class);
-        widget.initRoot(this);
+		widget.addCloseHandler(contextMenuCloseHandler);
 		registerRpc(ContextMenuClientRpc.class, serverToClientRPC);
 	}
 

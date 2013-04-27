@@ -1,19 +1,17 @@
 package org.vaadin.peter.contextmenu.client;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.vaadin.client.communication.RpcProxy;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ui.Icon;
 
@@ -149,12 +147,7 @@ public class ContextMenuWidget extends Widget {
 		menuOverlay.showAt(rootMenuX, rootMenuY);
 	}
 
-    public void initRoot(final ContextMenuConnector connector) {
-        menuOverlay.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                RpcProxy.create(ContextMenuServerRpc.class, connector).contextMenuClosed();
-            }
-        });
-    }
+	public void addCloseHandler(CloseHandler<PopupPanel> popupCloseHandler) {
+		menuOverlay.addCloseHandler(popupCloseHandler);
+	}
 }
