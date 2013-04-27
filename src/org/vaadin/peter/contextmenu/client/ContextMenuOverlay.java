@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.vaadin.client.ui.VOverlay;
@@ -130,10 +131,7 @@ class ContextMenuOverlay extends VOverlay {
 				+ parentMenuItem.getOffsetWidth();
 		int top = parentMenuItem.getAbsoluteTop();
 
-		setPopupPosition(left, top);
-
-		show();
-		normalizeItemWidths();
+        showAt(left, top);
 	}
 
 	public void closeSubMenus() {
@@ -179,4 +177,34 @@ class ContextMenuOverlay extends VOverlay {
 		menuItems.clear();
 		root.clear();
 	}
+
+    public void showAt(final int x, final int y) {
+        setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+            @Override
+            public void setPosition(int offsetWidth, int offsetHeight) {
+                int left = x + Window.getScrollLeft();
+                int top = y + Window.getScrollTop();
+
+                int exceedingWidth = (offsetWidth + left) - (Window.getClientWidth() + Window.getScrollLeft());
+                if (exceedingWidth > 0) {
+                    left -= exceedingWidth;
+                    if (left < 0) {
+                        left = 0;
+                    }
+                }
+
+                int exceedingHeight = (offsetHeight + top) - (Window.getClientHeight() + Window.getScrollTop());
+                if (exceedingHeight > 0) {
+                    top -= exceedingHeight;
+                    if (top < 0) {
+                        top = 0;
+                    }
+                }
+
+                setPopupPosition(left, top);
+            }
+        });
+
+        normalizeItemWidths();
+    }
 }
