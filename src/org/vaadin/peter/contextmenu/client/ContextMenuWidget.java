@@ -13,7 +13,6 @@ import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.client.ui.Icon;
 
 /**
  * Client side implementation for ContextMenu component
@@ -85,7 +84,7 @@ public class ContextMenuWidget extends Widget {
 				rootItem.caption, connector);
 		itemWidget.setEnabled(rootItem.enabled);
 		itemWidget.setSeparatorVisible(rootItem.separator);
-		
+
 		menuOverlay.addMenuItem(itemWidget);
 
 		for (ContextMenuItemState childState : rootItem.getChildren()) {
@@ -107,10 +106,7 @@ public class ContextMenuWidget extends Widget {
 		widget.setId(id);
 		widget.setCaption(caption);
 
-		if (hasIcon(id, contextMenuConnector)) {
-			widget.setIcon(new Icon(contextMenuConnector.getConnection(),
-					contextMenuConnector.getResourceUrl(id)));
-		}
+		widget.setIcon(contextMenuConnector.getResourceUrl(id));
 
 		ContextMenuItemWidgetHandler handler = new ContextMenuItemWidgetHandler(
 				widget, contextMenuConnector);
@@ -121,10 +117,6 @@ public class ContextMenuWidget extends Widget {
 		widget.setRootComponent(this);
 
 		return widget;
-	}
-
-	private boolean hasIcon(String id, ContextMenuConnector contextMenuConnector) {
-		return contextMenuConnector.getResourceUrl(id) != null;
 	}
 
 	private void createSubMenu(ContextMenuItemWidget parentWidget,
