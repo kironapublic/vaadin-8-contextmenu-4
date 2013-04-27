@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Implementation-Title: ContextMenu
+Implementation-Version: 4.1.3
+Vaadin-Package-Version: 1
+Vaadin-Widgetsets: org.vaadin.peter.contextmenu.ContextmenuWidgetset
+Class-Path: 
+
