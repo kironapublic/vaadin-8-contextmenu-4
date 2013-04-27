@@ -1,5 +1,6 @@
 package org.vaadin.peter.contextmenu;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -53,11 +54,11 @@ public class ContextMenu extends AbstractExtension {
 							.getConnector(connectorId)));
 		}
 
-        @Override
-        public void contextMenuClosed() {
-            fireEvent(new ContextMenuClosedEvent(ContextMenu.this));
-        }
-    };
+		@Override
+		public void contextMenuClosed() {
+			fireEvent(new ContextMenuClosedEvent(ContextMenu.this));
+		}
+	};
 
 	public ContextMenu() {
 		registerRpc(serverRPC);
@@ -308,16 +309,14 @@ public class ContextMenu extends AbstractExtension {
 	 */
 	public void addContextMenuCloseListener(
 			ContextMenuClosedListener contextMenuClosedListener) {
-		addListener(
-				ContextMenuClosedEvent.class,
-				contextMenuClosedListener,
+		addListener(ContextMenuClosedEvent.class, contextMenuClosedListener,
 				ContextMenuClosedListener.MENU_CLOSED);
 	}
 
 	/**
 	 * Adds listener that will be invoked when context menu is opened from the
 	 * component to which it's assigned to.
-	 *
+	 * 
 	 * @param contextMenuComponentListener
 	 */
 	public void addContextMenuComponentListener(
@@ -335,7 +334,9 @@ public class ContextMenu extends AbstractExtension {
 	 * @author Peter Lehto / Vaadin Ltd
 	 * 
 	 */
-	public class ContextMenuItem {
+	public class ContextMenuItem implements Serializable {
+		private static final long serialVersionUID = -6514832427611690050L;
+
 		private final ContextMenuItemState state;
 
 		private List<ContextMenu.ContextMenuItemClickListener> clickListeners;
@@ -435,7 +436,7 @@ public class ContextMenu extends AbstractExtension {
 		public Resource getIcon() {
 			return getResource(state.id);
 		}
-		
+
 		/**
 		 * Sets or disables separator line under this item
 		 * 
@@ -446,8 +447,8 @@ public class ContextMenu extends AbstractExtension {
 		}
 
 		/**
-		 * @return true if separator line is visible after this item,
-		 *         false otherwise
+		 * @return true if separator line is visible after this item, false
+		 *         otherwise
 		 */
 		public boolean hasSeparator() {
 			return state.separator;
@@ -468,7 +469,7 @@ public class ContextMenu extends AbstractExtension {
 		public boolean isEnabled() {
 			return state.enabled;
 		}
-		
+
 		/**
 		 * @return true if this menu item has a sub menu
 		 */
@@ -549,42 +550,42 @@ public class ContextMenu extends AbstractExtension {
 		}
 	}
 
-    /**
-     * ContextMenuClosedListener is used to listen for the event that the context menu is closed, either
-     * when a item is clicked or when the popup is canceled.
-     */
-    public interface ContextMenuClosedListener extends EventListener {
-        public static final Method MENU_CLOSED = ReflectTools
-        					.findMethod(ContextMenuClosedListener.class,
-                                "onContextMenuClosed",
-                                ContextMenuClosedEvent.class);
+	/**
+	 * ContextMenuClosedListener is used to listen for the event that the
+	 * context menu is closed, either when a item is clicked or when the popup
+	 * is canceled.
+	 */
+	public interface ContextMenuClosedListener extends EventListener {
+		public static final Method MENU_CLOSED = ReflectTools.findMethod(
+				ContextMenuClosedListener.class, "onContextMenuClosed",
+				ContextMenuClosedEvent.class);
 
-        /**
-         * Called when the context menu is closed
-         * @param event
-         */
-        public void onContextMenuClosed(ContextMenuClosedEvent event);
-    }
+		/**
+		 * Called when the context menu is closed
+		 * 
+		 * @param event
+		 */
+		public void onContextMenuClosed(ContextMenuClosedEvent event);
+	}
 
-    /**
-   	 * ContextMenuClosedEvent is an event fired by the context menu
-   	 * when it's closed.
-   	 */
-   	public static class ContextMenuClosedEvent extends EventObject {
-   		private static final long serialVersionUID = -5705205542849351984L;
+	/**
+	 * ContextMenuClosedEvent is an event fired by the context menu when it's
+	 * closed.
+	 */
+	public static class ContextMenuClosedEvent extends EventObject {
+		private static final long serialVersionUID = -5705205542849351984L;
 
-   		private ContextMenu contextMenu;
+		private ContextMenu contextMenu;
 
-   		public ContextMenuClosedEvent(ContextMenu contextMenu) {
-   			super(contextMenu);
-   			this.contextMenu = contextMenu;
-   		}
+		public ContextMenuClosedEvent(ContextMenu contextMenu) {
+			super(contextMenu);
+			this.contextMenu = contextMenu;
+		}
 
-   		public ContextMenu getContextMenu() {
-   			return contextMenu;
-   		}
-   	}
-
+		public ContextMenu getContextMenu() {
+			return contextMenu;
+		}
+	}
 
 	/**
 	 * ContextMenuOpenedListener is used to modify the content of context menu
