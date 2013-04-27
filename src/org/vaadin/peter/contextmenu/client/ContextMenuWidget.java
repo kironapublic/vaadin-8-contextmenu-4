@@ -83,7 +83,9 @@ public class ContextMenuWidget extends Widget {
 			ContextMenuConnector connector) {
 		ContextMenuItemWidget itemWidget = createEmptyItemWidget(rootItem.id,
 				rootItem.caption, connector);
-
+		itemWidget.setEnabled(rootItem.enabled);
+		itemWidget.setSeparatorVisible(rootItem.separator);
+		
 		menuOverlay.addMenuItem(itemWidget);
 
 		for (ContextMenuItemState childState : rootItem.getChildren()) {
@@ -129,6 +131,8 @@ public class ContextMenuWidget extends Widget {
 			ContextMenuItemState childState, ContextMenuConnector connector) {
 		ContextMenuItemWidget childWidget = createEmptyItemWidget(
 				childState.id, childState.caption, connector);
+		childWidget.setEnabled(childState.enabled);
+		childWidget.setSeparatorVisible(childState.separator);
 		parentWidget.addSubMenuItem(childWidget);
 
 		for (ContextMenuItemState child : childState.getChildren()) {

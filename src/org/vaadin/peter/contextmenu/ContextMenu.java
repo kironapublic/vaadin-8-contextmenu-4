@@ -435,7 +435,40 @@ public class ContextMenu extends AbstractExtension {
 		public Resource getIcon() {
 			return getResource(state.id);
 		}
+		
+		/**
+		 * Sets or disables separator line under this item
+		 * 
+		 * @param visible
+		 */
+		public void setSeparatorVisible(boolean separatorVisible) {
+			state.separator = separatorVisible;
+		}
 
+		/**
+		 * @return true if separator line is visible after this item,
+		 *         false otherwise
+		 */
+		public boolean hasSeparator() {
+			return state.separator;
+		}
+
+		/**
+		 * Enables or disables this menu item
+		 * 
+		 * @param enabled
+		 */
+		public void setEnabled(boolean enabled) {
+			state.enabled = enabled;
+		}
+
+		/**
+		 * @return true if menu item is enabled, false otherwise
+		 */
+		public boolean isEnabled() {
+			return state.enabled;
+		}
+		
 		/**
 		 * @return true if this menu item has a sub menu
 		 */

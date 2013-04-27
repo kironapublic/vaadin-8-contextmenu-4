@@ -61,6 +61,7 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		openTimer.cancel();
+		widget.setFocus(false);
 	}
 
 	@Override
@@ -68,10 +69,12 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 		openTimer.cancel();
 
 		if (isEnabled()) {
-			widget.closeSiblingMenus();
+			if (!widget.isSubmenuOpen()) {
+				widget.closeSiblingMenus();
+			}
 			widget.setFocus(true);
 
-			if (widget.hasSubMenu()) {
+			if (widget.hasSubMenu() && !widget.isSubmenuOpen()) {
 				openTimer.schedule(500);
 			}
 		}
