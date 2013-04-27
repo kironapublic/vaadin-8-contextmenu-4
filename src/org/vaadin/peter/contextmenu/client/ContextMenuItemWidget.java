@@ -231,7 +231,6 @@ public class ContextMenuItemWidget extends FocusWidget {
 			setFocus(false);
 			addStyleName("v-context-menu-item-basic-open");
 			subMenu.openNextTo(this);
-			subMenu.setFocus(true);
 		}
 	}
 
@@ -254,5 +253,23 @@ public class ContextMenuItemWidget extends FocusWidget {
 		}
 
 		return false;
+	}
+
+	public void setSeparatorVisible(boolean separatorVisible) {
+		if (separatorVisible) {
+			root.addStyleName("v-context-menu-item-separator");
+		} else {
+			root.removeStyleName("v-context-menu-item-separator");
+		}
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		if (enabled) {
+			root.removeStyleName("v-context-menu-item-disabled");
+		} else {
+			root.addStyleName("v-context-menu-item-disabled");
+		}
 	}
 }

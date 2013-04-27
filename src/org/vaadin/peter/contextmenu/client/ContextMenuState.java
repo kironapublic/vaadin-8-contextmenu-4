@@ -66,6 +66,10 @@ public class ContextMenuState extends AbstractComponentState {
 		public String caption;
 
 		public String id;
+		
+		public boolean separator;
+
+		public boolean enabled = true;
 
 		public ContextMenuItemState() {
 			children = new ArrayList<ContextMenuState.ContextMenuItemState>();

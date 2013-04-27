@@ -29,6 +29,10 @@
 	background-color: #f0f0f0;
 }
 
+.v-context-menu .v-context-menu-item-basic.v-context-menu-item-separator {
+	border-bottom: 1px solid #d0d0d0;
+}
+
 .v-context-menu .v-context-menu-item-basic-submenu {
 	background: transparent url(img/basic/arrow.png) no-repeat center right;
 }
@@ -40,8 +44,14 @@
 	outline: none;
 }
 
-.v-context-menu .v-context-menu-item-basic.v-disabled:hover,
-.v-context-menu .v-context-menu-item-basic-submenu.v-disabled:hover {
+.v-context-menu .v-context-menu-item-basic.v-context-menu-item-disabled {
+	opacity: 0.3;
+	filter: alpha(opacity = 30);
+	zoom: 1;
+}
+
+.v-context-menu .v-context-menu-item-basic.v-context-menu-item-disabled:hover,
+.v-context-menu .v-context-menu-item-basic-submenu.v-context-menu-item-disabled:hover {
 	background-color: #f0f0f0;
 }
 
