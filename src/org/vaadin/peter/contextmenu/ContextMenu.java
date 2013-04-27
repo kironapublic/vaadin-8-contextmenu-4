@@ -52,7 +52,12 @@ public class ContextMenu extends AbstractExtension {
 					x, y, (Component) UI.getCurrent().getConnectorTracker()
 							.getConnector(connectorId)));
 		}
-	};
+
+        @Override
+        public void contextMenuClosed() {
+            fireEvent(new ContextMenuClosedEvent(ContextMenu.this));
+        }
+    };
 
 	public ContextMenu() {
 		registerRpc(serverRPC);
@@ -297,9 +302,22 @@ public class ContextMenu extends AbstractExtension {
 	}
 
 	/**
+	 * Adds listener that will be invoked when context menu is closed.
+	 * 
+	 * @param contextMenuClosedListener
+	 */
+	public void addContextMenuCloseListener(
+			ContextMenuClosedListener contextMenuClosedListener) {
+		addListener(
+				ContextMenuClosedEvent.class,
+				contextMenuClosedListener,
+				ContextMenuClosedListener.MENU_CLOSED);
+	}
+
+	/**
 	 * Adds listener that will be invoked when context menu is opened from the
 	 * component to which it's assigned to.
-	 * 
+	 *
 	 * @param contextMenuComponentListener
 	 */
 	public void addContextMenuComponentListener(
@@ -530,6 +548,43 @@ public class ContextMenu extends AbstractExtension {
 			super(component);
 		}
 	}
+
+    /**
+     * ContextMenuClosedListener is used to listen for the event that the context menu is closed, either
+     * when a item is clicked or when the popup is canceled.
+     */
+    public interface ContextMenuClosedListener extends EventListener {
+        public static final Method MENU_CLOSED = ReflectTools
+        					.findMethod(ContextMenuClosedListener.class,
+                                "onContextMenuClosed",
+                                ContextMenuClosedEvent.class);
+
+        /**
+         * Called when the context menu is closed
+         * @param event
+         */
+        public void onContextMenuClosed(ContextMenuClosedEvent event);
+    }
+
+    /**
+   	 * ContextMenuClosedEvent is an event fired by the context menu
+   	 * when it's closed.
+   	 */
+   	public static class ContextMenuClosedEvent extends EventObject {
+   		private static final long serialVersionUID = -5705205542849351984L;
+
+   		private ContextMenu contextMenu;
+
+   		public ContextMenuClosedEvent(ContextMenu contextMenu) {
+   			super(contextMenu);
+   			this.contextMenu = contextMenu;
+   		}
+
+   		public ContextMenu getContextMenu() {
+   			return contextMenu;
+   		}
+   	}
+
 
 	/**
 	 * ContextMenuOpenedListener is used to modify the content of context menu
