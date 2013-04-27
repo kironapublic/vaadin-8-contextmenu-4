@@ -1,11 +1,12 @@
 package org.vaadin.peter.contextmenu.client;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.vaadin.client.ui.Icon;
 
 /**
  * ContextMenuItemWidget is client side widget that represents one menu item in
@@ -16,7 +17,7 @@ import com.vaadin.client.ui.Icon;
 public class ContextMenuItemWidget extends FocusWidget {
 	private final FlowPanel root;
 
-	protected Icon icon;
+	protected ImageElement icon;
 	private final FlowPanel iconContainer;
 	private final Label text;
 
@@ -146,9 +147,16 @@ public class ContextMenuItemWidget extends FocusWidget {
 		text.setText(caption);
 	}
 
-	public void setIcon(Icon icon) {
-		this.icon = icon;
-		iconContainer.getElement().appendChild(icon.getElement());
+	public void setIcon(String url) {
+		if (url == null) {
+			iconContainer.clear();
+			icon = null;
+		} else {
+			icon = Document.get().createImageElement();
+			icon.setClassName("v-icon");
+			icon.setSrc(url);
+			iconContainer.getElement().appendChild(icon);
+		}
 	}
 
 	public void setRootComponent(ContextMenuWidget rootComponent) {
