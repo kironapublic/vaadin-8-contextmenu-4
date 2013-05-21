@@ -66,6 +66,7 @@ public class ContextMenu extends AbstractExtension {
 		items = new HashMap<String, ContextMenu.ContextMenuItem>();
 
 		setOpenAutomatically(true);
+		setHideAutomatically(true);
 	}
 
 	protected String getNextId() {
@@ -87,6 +88,38 @@ public class ContextMenu extends AbstractExtension {
 	 */
 	public void setOpenAutomatically(boolean openAutomatically) {
 		getState().setOpenAutomatically(openAutomatically);
+	}
+
+	/**
+	 * @return true if open automatically is on. If open automatically is on, it
+	 *         means that context menu will always be opened when it's host
+	 *         component is right clicked. If automatic opening is turned off,
+	 *         context menu will only open when server side open(x, y) is
+	 *         called. Automatic opening avoid having to make server roundtrip
+	 *         whereas "manual" opening allows to have logic in menu before
+	 *         opening it.
+	 */
+	public boolean isOpenAutomatically() {
+		return getState().isOpenAutomatically();
+	}
+
+	/**
+	 * Sets menu to hide automatically after mouse cliks on menu items or area
+	 * off the menu. If automatic hiding is disabled menu will stay open as long
+	 * as hide is called from the server side.
+	 * 
+	 * @param hideAutomatically
+	 */
+	public void setHideAutomatically(boolean hideAutomatically) {
+		getState().setHideAutomatically(hideAutomatically);
+	}
+
+	/**
+	 * @return true if context menu is hiding automatically after clicks, false
+	 *         otherwise.
+	 */
+	public boolean isHideAutomatically() {
+		return getState().isHideAutomatically();
 	}
 
 	/**
@@ -247,6 +280,13 @@ public class ContextMenu extends AbstractExtension {
 	 */
 	public void open(int x, int y) {
 		getRpcProxy(ContextMenuClientRpc.class).showContextMenu(x, y);
+	}
+
+	/**
+	 * Closes the context menu from server side
+	 */
+	public void hide() {
+		getRpcProxy(ContextMenuClientRpc.class).hide();
 	}
 
 	@Override

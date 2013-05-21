@@ -10,7 +10,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -38,12 +37,16 @@ public class ContextMenuWidget extends Widget {
 				int type = nativeEvent.getTypeInt();
 				switch (type) {
 				case Event.ONMOUSEDOWN: {
-					hide();
+					if (isHideAutomatically()) {
+						hide();
+					}
 				}
 				}
 			}
 		}
 	};
+
+	private boolean hideAutomatically;
 
 	public ContextMenuWidget() {
 		Element element = DOM.createDiv();
@@ -137,13 +140,18 @@ public class ContextMenuWidget extends Widget {
 	}
 
 	public void showContextMenu(int rootMenuX, int rootMenuY) {
-		rootMenuX += Window.getScrollLeft();
-		rootMenuY += Window.getScrollTop();
-
 		menuOverlay.showAt(rootMenuX, rootMenuY);
 	}
 
 	public void addCloseHandler(CloseHandler<PopupPanel> popupCloseHandler) {
 		menuOverlay.addCloseHandler(popupCloseHandler);
+	}
+
+	public void setHideAutomatically(boolean hideAutomatically) {
+		this.hideAutomatically = hideAutomatically;
+	}
+
+	public boolean isHideAutomatically() {
+		return hideAutomatically;
 	}
 }

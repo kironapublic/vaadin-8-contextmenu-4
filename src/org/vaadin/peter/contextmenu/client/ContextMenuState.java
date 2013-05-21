@@ -13,6 +13,8 @@ public class ContextMenuState extends AbstractComponentState {
 
 	private boolean openAutomatically;
 
+	private boolean hideAutomatically;
+
 	public ContextMenuState() {
 		rootItems = new ArrayList<ContextMenuState.ContextMenuItemState>();
 	}
@@ -58,6 +60,22 @@ public class ContextMenuState extends AbstractComponentState {
 		this.openAutomatically = openAutomatically;
 	}
 
+	/**
+	 * @return true if context menu is hidden automatically
+	 */
+	public boolean isHideAutomatically() {
+		return hideAutomatically;
+	}
+
+	/**
+	 * Enables or disables automatic hiding of context menu
+	 * 
+	 * @param hideAutomatically
+	 */
+	public void setHideAutomatically(boolean hideAutomatically) {
+		this.hideAutomatically = hideAutomatically;
+	}
+
 	public static class ContextMenuItemState implements Serializable {
 		private static final long serialVersionUID = 3836772122928080543L;
 
@@ -66,7 +84,7 @@ public class ContextMenuState extends AbstractComponentState {
 		public String caption;
 
 		public String id;
-		
+
 		public boolean separator;
 
 		public boolean enabled = true;
@@ -93,4 +111,5 @@ public class ContextMenuState extends AbstractComponentState {
 			this.children = children;
 		}
 	}
+
 }

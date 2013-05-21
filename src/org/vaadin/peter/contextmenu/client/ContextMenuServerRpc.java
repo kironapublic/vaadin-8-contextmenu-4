@@ -28,8 +28,8 @@ public interface ContextMenuServerRpc extends ServerRpc {
 	public void onContextMenuOpenRequested(int x, int y,
 			String connectorIdOfComponent);
 
-    /**
-     * Called by the client side when context menu is closed.
-     */
-    public void contextMenuClosed();
+	/**
+	 * Called by the client side when context menu is closed.
+	 */
+	public void contextMenuClosed();
 }
