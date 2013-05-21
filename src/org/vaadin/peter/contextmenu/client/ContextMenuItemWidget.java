@@ -208,13 +208,11 @@ public class ContextMenuItemWidget extends FocusWidget {
 				openSubMenu();
 				return false;
 			} else {
-				if (isRootItem()) {
+				if (rootComponent.isHideAutomatically()) {
 					closeContextMenu();
-				} else {
-					parentItem.closeContextMenu();
+					return true;
 				}
-
-				return true;
+				return false;
 			}
 		}
 

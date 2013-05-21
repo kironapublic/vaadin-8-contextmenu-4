@@ -17,4 +17,9 @@ public interface ContextMenuClientRpc extends ClientRpc {
 	 * @param y
 	 */
 	public void showContextMenu(int x, int y);
+
+	/**
+	 * Sends request to client widget to close context menu
+	 */
+	public void hide();
 }

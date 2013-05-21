@@ -85,6 +85,11 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		public void showContextMenu(int x, int y) {
 			widget.showContextMenu(x, y);
 		}
+
+		@Override
+		public void hide() {
+			widget.hide();
+		}
 	};
 
 	@Override
@@ -104,6 +109,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		super.onStateChanged(stateChangeEvent);
 
 		widget.clearItems();
+		widget.setHideAutomatically(getState().isHideAutomatically());
 
 		for (ContextMenuItemState rootItem : getState().getRootItems()) {
 			widget.addRootMenuItem(rootItem, this);

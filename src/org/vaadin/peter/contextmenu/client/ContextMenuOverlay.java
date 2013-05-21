@@ -131,7 +131,7 @@ class ContextMenuOverlay extends VOverlay {
 				+ parentMenuItem.getOffsetWidth();
 		int top = parentMenuItem.getAbsoluteTop();
 
-        showAt(left, top);
+		showAt(left, top);
 	}
 
 	public void closeSubMenus() {
@@ -178,33 +178,35 @@ class ContextMenuOverlay extends VOverlay {
 		root.clear();
 	}
 
-    public void showAt(final int x, final int y) {
-        setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-            @Override
-            public void setPosition(int offsetWidth, int offsetHeight) {
-                int left = x + Window.getScrollLeft();
-                int top = y + Window.getScrollTop();
+	public void showAt(final int x, final int y) {
+		setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+			@Override
+			public void setPosition(int offsetWidth, int offsetHeight) {
+				int left = x + Window.getScrollLeft();
+				int top = y + Window.getScrollTop();
 
-                int exceedingWidth = (offsetWidth + left) - (Window.getClientWidth() + Window.getScrollLeft());
-                if (exceedingWidth > 0) {
-                    left -= exceedingWidth;
-                    if (left < 0) {
-                        left = 0;
-                    }
-                }
+				int exceedingWidth = (offsetWidth + left)
+						- (Window.getClientWidth() + Window.getScrollLeft());
+				if (exceedingWidth > 0) {
+					left -= exceedingWidth;
+					if (left < 0) {
+						left = 0;
+					}
+				}
 
-                int exceedingHeight = (offsetHeight + top) - (Window.getClientHeight() + Window.getScrollTop());
-                if (exceedingHeight > 0) {
-                    top -= exceedingHeight;
-                    if (top < 0) {
-                        top = 0;
-                    }
-                }
+				int exceedingHeight = (offsetHeight + top)
+						- (Window.getClientHeight() + Window.getScrollTop());
+				if (exceedingHeight > 0) {
+					top -= exceedingHeight;
+					if (top < 0) {
+						top = 0;
+					}
+				}
 
-                setPopupPosition(left, top);
-            }
-        });
+				setPopupPosition(left, top);
+			}
+		});
 
-        normalizeItemWidths();
-    }
+		normalizeItemWidths();
+	}
 }

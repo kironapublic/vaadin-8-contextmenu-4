@@ -131,8 +131,8 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 		if (isEnabled()) {
 			if (widget.hasSubMenu()) {
 				if (!widget.isSubmenuOpen()) {
-					widget.onItemClicked();
-					contextMenuRpc.itemClicked(widget.getId(), false);
+					boolean menuClosed = widget.onItemClicked();
+					contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 				}
 			} else {
 				boolean menuClosed = widget.onItemClicked();
@@ -145,5 +145,4 @@ public class ContextMenuItemWidgetHandler implements ClickHandler,
 		boolean menuClosed = widget.onItemClicked();
 		contextMenuRpc.itemClicked(widget.getId(), menuClosed);
 	}
-
 }
