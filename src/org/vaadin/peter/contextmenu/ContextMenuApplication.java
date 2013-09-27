@@ -1,5 +1,6 @@
 package org.vaadin.peter.contextmenu;
 
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
@@ -14,6 +15,8 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.data.Item;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
@@ -21,7 +24,7 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-@Theme("test")
+@Theme("contextmenu")
 public class ContextMenuApplication extends UI {
 	private static final long serialVersionUID = 4991155918522503460L;
 
@@ -75,7 +78,11 @@ public class ContextMenuApplication extends UI {
 
 		contextMenu.addItem("Test item #1").addItem("Child #1")
 				.addItem("Child 2").addItemClickListener(clickListener);
-		contextMenu.addItem("Test item #2");
+		contextMenu.addItem("Test item #2").setSeparatorVisible(true);
+		ContextMenuItem item3 = contextMenu.addItem("Test item #3");
+		item3.setSeparatorVisible(true);
+		item3.addItem("Test Sub Item Of #3");
+		contextMenu.addItem("Test item #4");
 
 		contextMenu.setAsContextMenuOf(layout);
 		contextMenu.setOpenAutomatically(false);
@@ -97,6 +104,20 @@ public class ContextMenuApplication extends UI {
 				contextMenu.open(event.getX(), event.getY());
 			}
 		});
+
+		Button button = new Button("Test menu button");
+		button.addClickListener(new Button.ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				contextMenu.hide();
+			}
+		});
+		ContextMenu buttonContextMenu = new ContextMenu();
+		buttonContextMenu.addItem("TestItem").addItem("TestItem");
+		buttonContextMenu.setAsContextMenuOf(button);
+
+		layout.addComponent(button);
 
 		Table table = new Table();
 		table.setWidth(500, Unit.PIXELS);
@@ -130,8 +151,8 @@ public class ContextMenuApplication extends UI {
 
 		ContextMenu treeContextMenu = new ContextMenu();
 		treeContextMenu.addContextMenuTreeListener(treeItemListener);
-		treeContextMenu.addItem("Tree test item #1");
-		treeContextMenu.addItem("Tree test item #2");
+		treeContextMenu.addItem("Tree test item #1").setSeparatorVisible(true);
+		treeContextMenu.addItem("Tree test item #2").setEnabled(false);
 		treeContextMenu.setAsTreeContextMenu(tree);
 
 		layout.addComponent(tree);
