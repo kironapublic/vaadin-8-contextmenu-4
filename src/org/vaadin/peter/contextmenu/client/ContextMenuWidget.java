@@ -143,6 +143,10 @@ public class ContextMenuWidget extends Widget {
 		menuOverlay.showAt(rootMenuX, rootMenuY);
 	}
 
+	public void showContextMenu(Widget widget) {
+		menuOverlay.showRelativeTo(widget);
+	}
+
 	public void addCloseHandler(CloseHandler<PopupPanel> popupCloseHandler) {
 		menuOverlay.addCloseHandler(popupCloseHandler);
 	}
@@ -154,4 +158,5 @@ public class ContextMenuWidget extends Widget {
 	public boolean isHideAutomatically() {
 		return hideAutomatically;
 	}
+
 }

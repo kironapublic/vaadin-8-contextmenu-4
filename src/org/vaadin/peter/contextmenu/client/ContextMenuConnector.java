@@ -13,12 +13,13 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.ConnectorMap;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.Util;
 import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
-import com.vaadin.client.ui.VScrollTable;
+import com.vaadin.client.ui.AbstractComponentConnector;
 import com.vaadin.client.ui.VTree;
 import com.vaadin.shared.ui.Connect;
 
@@ -87,9 +88,23 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		}
 
 		@Override
+		public void showContextMenuRelativeTo(String connectorId) {
+			ServerConnector connector = ConnectorMap.get(getConnection())
+					.getConnector(connectorId);
+
+			if (connector instanceof AbstractComponentConnector) {
+				AbstractComponentConnector componentConnector = (AbstractComponentConnector) connector;
+				componentConnector.getWidget();
+
+				widget.showContextMenu(componentConnector.getWidget());
+			}
+		}
+
+		@Override
 		public void hide() {
 			widget.hide();
 		}
+
 	};
 
 	@Override
@@ -121,12 +136,8 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		this.extensionTarget = ((ComponentConnector) extensionTarget)
 				.getWidget();
 
-		// Table and Tree are currently handled with their internal
-		// ItemClickListeners as their current implementations are not too
-		// extension friendly.
-		if (this.extensionTarget instanceof VScrollTable) {
-			return;
-		} else if (this.extensionTarget instanceof VTree) {
+		// Tree is currently handled by it's internal ItemClickListener
+		if (this.extensionTarget instanceof VTree) {
 			return;
 		}
 
