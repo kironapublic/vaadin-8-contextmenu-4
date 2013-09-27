@@ -31,6 +31,14 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.util.ReflectTools;
 
+/**
+ * ContextMenu is an extension which can be attached to any Vaadin component to
+ * display a popup context menu. Most useful the menu is when attached for
+ * example to Tree or Table which support item and property based context menu
+ * detection.
+ * 
+ * @author Peter / Vaadin
+ */
 public class ContextMenu extends AbstractExtension {
 	private static final long serialVersionUID = 4275181115413786498L;
 
