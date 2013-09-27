@@ -1,6 +1,5 @@
 package org.vaadin.peter.contextmenu;
 
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
@@ -36,25 +35,37 @@ public class ContextMenuApplication extends UI {
 		}
 	};
 
+	private ContextMenuOpenedListener.ComponentListener openComponentListener = new ContextMenuOpenedListener.ComponentListener() {
+
+		@Override
+		public void onContextMenuOpenFromComponent(
+				ContextMenuOpenedOnComponentEvent event) {
+			event.getContextMenu().removeAllItems();
+			event.getContextMenu().addItem("Empty space");
+			event.getContextMenu().open(event.getX(), event.getY());
+		}
+	};
+
 	private ContextMenuOpenedListener.TableListener openListener = new ContextMenuOpenedListener.TableListener() {
 
 		@Override
 		public void onContextMenuOpenFromRow(
 				ContextMenuOpenedOnTableRowEvent event) {
-			Notification.show("Table item clicked " + event.getItemId() + " "
-					+ event.getPropertyId());
+			event.getContextMenu().removeAllItems();
+			event.getContextMenu().addItem("Item " + event.getItemId());
 		}
 
 		@Override
 		public void onContextMenuOpenFromHeader(
 				ContextMenuOpenedOnTableHeaderEvent event) {
-			Notification.show("Table header clicked " + event.getPropertyId());
+			event.getContextMenu().removeAllItems();
+			event.getContextMenu().addItem("Item " + event.getPropertyId());
 		}
 
 		@Override
 		public void onContextMenuOpenFromFooter(
 				ContextMenuOpenedOnTableFooterEvent event) {
-			Notification.show("Table footer clicked " + event.getPropertyId());
+			event.getContextMenu().addItem("Item " + event.getPropertyId());
 		}
 	};
 
@@ -69,23 +80,11 @@ public class ContextMenuApplication extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-
 		VerticalLayout layout = new VerticalLayout();
 
 		setContent(layout);
 
 		final ContextMenu contextMenu = new ContextMenu();
-
-		contextMenu.addItem("Test item #1").addItem("Child #1")
-				.addItem("Child 2").addItemClickListener(clickListener);
-		contextMenu.addItem("Test item #2").setSeparatorVisible(true);
-		ContextMenuItem item3 = contextMenu.addItem("Test item #3");
-		item3.setSeparatorVisible(true);
-		item3.addItem("Test Sub Item Of #3");
-		contextMenu.addItem("Test item #4");
-
-		contextMenu.setAsContextMenuOf(layout);
-		contextMenu.setOpenAutomatically(false);
 
 		layout.addComponent(new Label("Hello world labe!"));
 
@@ -105,20 +104,20 @@ public class ContextMenuApplication extends UI {
 			}
 		});
 
-		Button button = new Button("Test menu button");
+		final ContextMenu buttonContextMenu = new ContextMenu();
+		final Button button = new Button("Test menu button");
 		button.addClickListener(new Button.ClickListener() {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				contextMenu.hide();
+				buttonContextMenu.open(button);
 			}
 		});
-		ContextMenu buttonContextMenu = new ContextMenu();
+
 		buttonContextMenu.addItem("TestItem").addItem("TestItem");
 		buttonContextMenu.setAsContextMenuOf(button);
 
 		layout.addComponent(button);
-
 		Table table = new Table();
 		table.setWidth(500, Unit.PIXELS);
 		table.setHeight(500, Unit.PIXELS);
@@ -132,6 +131,7 @@ public class ContextMenuApplication extends UI {
 		item.getItemProperty("Age").setValue(5);
 
 		ContextMenu tableContextMenu = new ContextMenu();
+		tableContextMenu.addContextMenuComponentListener(openComponentListener);
 		tableContextMenu.addContextMenuTableListener(openListener);
 		tableContextMenu.addItem("Table test item #1").setIcon(
 				new ThemeResource("copy.png"));

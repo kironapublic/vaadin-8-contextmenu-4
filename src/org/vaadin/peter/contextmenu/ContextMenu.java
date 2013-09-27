@@ -197,6 +197,8 @@ public class ContextMenu extends AbstractExtension {
 	public void setAsTableContextMenu(final Table table) {
 		extend(table);
 
+		setOpenAutomatically(false);
+
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 			private static final long serialVersionUID = -348059189217149508L;
 
@@ -279,15 +281,23 @@ public class ContextMenu extends AbstractExtension {
 	/**
 	 * Opens the context menu to given coordinates. ContextMenu must extend
 	 * component before calling this method. This method is only intended for
-	 * opening the context menu from server side. Using this method is not
-	 * recommended and should be used only when there is no reasonable way for
-	 * listeners to detect that menu was otherwise opened.
+	 * opening the context menu from server side when using
+	 * {@link #ContextMenuOpenedListener.ComponentListener}
 	 * 
 	 * @param x
 	 * @param y
 	 */
 	public void open(int x, int y) {
 		getRpcProxy(ContextMenuClientRpc.class).showContextMenu(x, y);
+	}
+
+	/**
+	 * 
+	 * @param component
+	 */
+	public void open(Component component) {
+		getRpcProxy(ContextMenuClientRpc.class).showContextMenuRelativeTo(
+				component.getConnectorId());
 	}
 
 	/**
@@ -645,6 +655,18 @@ public class ContextMenu extends AbstractExtension {
 	 */
 	public interface ContextMenuOpenedListener extends EventListener {
 
+		/**
+		 * ComponentListener is used when context menu is extending a component
+		 * and works in mode where auto opening is disabled. For example if
+		 * ContextMenu is assigned to a Layout and layout is right clicked when
+		 * auto open feature is disabled, the open listener would be called
+		 * instead of menu opening automatically. Example usage is for example
+		 * as follows:
+		 * 
+		 * event.getContextMenu().open(event.getRequestSourceComponent());
+		 * 
+		 * @author Peter Lehto / Vaadin
+		 */
 		public interface ComponentListener extends ContextMenuOpenedListener {
 
 			public static final Method MENU_OPENED_FROM_COMPONENT = ReflectTools
@@ -878,6 +900,13 @@ public class ContextMenu extends AbstractExtension {
 		}
 
 		/**
+		 * @return Component which initiated the context menu open request.
+		 */
+		public Component getRequestSourceComponent() {
+			return (Component) getSource();
+		}
+
+		/**
 		 * @return x-coordinate of open position.
 		 */
 		public int getX() {
@@ -891,4 +920,5 @@ public class ContextMenu extends AbstractExtension {
 			return y;
 		}
 	}
+
 }
