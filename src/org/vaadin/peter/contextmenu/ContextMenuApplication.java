@@ -1,5 +1,6 @@
 package org.vaadin.peter.contextmenu;
 
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
@@ -12,13 +13,19 @@ import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTreeItemEvent
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -27,7 +34,7 @@ import com.vaadin.ui.VerticalLayout;
 public class ContextMenuApplication extends UI {
 	private static final long serialVersionUID = 4991155918522503460L;
 
-	private ContextMenuItemClickListener clickListener = new ContextMenuItemClickListener() {
+	private final ContextMenuItemClickListener clickListener = new ContextMenuItemClickListener() {
 
 		@Override
 		public void contextMenuItemClicked(ContextMenuItemClickEvent event) {
@@ -35,7 +42,7 @@ public class ContextMenuApplication extends UI {
 		}
 	};
 
-	private ContextMenuOpenedListener.ComponentListener openComponentListener = new ContextMenuOpenedListener.ComponentListener() {
+	private final ContextMenuOpenedListener.ComponentListener openComponentListener = new ContextMenuOpenedListener.ComponentListener() {
 
 		@Override
 		public void onContextMenuOpenFromComponent(
@@ -46,7 +53,7 @@ public class ContextMenuApplication extends UI {
 		}
 	};
 
-	private ContextMenuOpenedListener.TableListener openListener = new ContextMenuOpenedListener.TableListener() {
+	private final ContextMenuOpenedListener.TableListener openListener = new ContextMenuOpenedListener.TableListener() {
 
 		@Override
 		public void onContextMenuOpenFromRow(
@@ -69,7 +76,7 @@ public class ContextMenuApplication extends UI {
 		}
 	};
 
-	private ContextMenuOpenedListener.TreeListener treeItemListener = new ContextMenuOpenedListener.TreeListener() {
+	private final ContextMenuOpenedListener.TreeListener treeItemListener = new ContextMenuOpenedListener.TreeListener() {
 
 		@Override
 		public void onContextMenuOpenFromTreeItem(
@@ -156,6 +163,46 @@ public class ContextMenuApplication extends UI {
 		treeContextMenu.setAsTreeContextMenu(tree);
 
 		layout.addComponent(tree);
+
+		{
+			// Example on how to change the caption and enabled state of an
+			// existing context menu item
+			final ContextMenu configurableContextMenu = new ContextMenu();
+			configurableContextMenu.setOpenAutomatically(true);
+			final ContextMenuItem configurableMenuItem = configurableContextMenu
+					.addItem("Menu Item");
+			final TextField captionField = new TextField();
+			captionField.setWidth(120, Unit.PIXELS);
+			captionField.setImmediate(true);
+			captionField.setInputPrompt("Enter menu item caption here");
+			captionField.addTextChangeListener(new TextChangeListener() {
+
+				@Override
+				public void textChange(TextChangeEvent event) {
+					String newCaption = event.getText();
+					configurableMenuItem.setCaption(newCaption);
+				}
+			});
+			layout.addComponent(captionField);
+
+			final CheckBox enabledCheckBox = new CheckBox("Menu item enabled");
+			enabledCheckBox.setImmediate(true);
+			enabledCheckBox.addValueChangeListener(new ValueChangeListener() {
+
+				@Override
+				public void valueChange(ValueChangeEvent event) {
+					boolean newEnabled = (Boolean) event.getProperty()
+							.getValue();
+					configurableMenuItem.setEnabled(newEnabled);
+				}
+			});
+			layout.addComponent(enabledCheckBox);
+
+			Label menuLabel = new Label("Click here to open menu");
+			configurableContextMenu.setAsContextMenuOf(menuLabel);
+			layout.addComponent(menuLabel);
+
+		}
 
 	}
 }

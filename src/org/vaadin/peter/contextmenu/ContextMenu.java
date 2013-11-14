@@ -42,9 +42,9 @@ import com.vaadin.util.ReflectTools;
 public class ContextMenu extends AbstractExtension {
 	private static final long serialVersionUID = 4275181115413786498L;
 
-	private Map<String, ContextMenuItem> items;
+	private final Map<String, ContextMenuItem> items;
 
-	private ContextMenuServerRpc serverRPC = new ContextMenuServerRpc() {
+	private final ContextMenuServerRpc serverRPC = new ContextMenuServerRpc() {
 		private static final long serialVersionUID = 5622864428554337992L;
 
 		@Override
@@ -397,7 +397,7 @@ public class ContextMenu extends AbstractExtension {
 
 		private final ContextMenuItemState state;
 
-		private List<ContextMenu.ContextMenuItemClickListener> clickListeners;
+		private final List<ContextMenu.ContextMenuItemClickListener> clickListeners;
 
 		private Object data;
 
@@ -519,6 +519,7 @@ public class ContextMenu extends AbstractExtension {
 		 */
 		public void setEnabled(boolean enabled) {
 			state.enabled = enabled;
+			markAsDirty();
 		}
 
 		/**
@@ -573,6 +574,15 @@ public class ContextMenu extends AbstractExtension {
 		@Override
 		public int hashCode() {
 			return state.id.hashCode();
+		}
+
+		/**
+		 * Changes the caption of the menu item
+		 * @param newCaption
+		 */
+		public void setCaption(String newCaption) {
+			state.caption = newCaption;
+			markAsDirty();
 		}
 	}
 
@@ -633,7 +643,7 @@ public class ContextMenu extends AbstractExtension {
 	public static class ContextMenuClosedEvent extends EventObject {
 		private static final long serialVersionUID = -5705205542849351984L;
 
-		private ContextMenu contextMenu;
+		private final ContextMenu contextMenu;
 
 		public ContextMenuClosedEvent(ContextMenu contextMenu) {
 			super(contextMenu);
@@ -761,8 +771,8 @@ public class ContextMenu extends AbstractExtension {
 	public static class ContextMenuOpenedOnTreeItemEvent extends EventObject {
 		private static final long serialVersionUID = -7705205542849351984L;
 
-		private Object itemId;
-		private ContextMenu contextMenu;
+		private final Object itemId;
+		private final ContextMenu contextMenu;
 
 		public ContextMenuOpenedOnTreeItemEvent(ContextMenu contextMenu,
 				Tree tree, Object itemId) {
@@ -788,9 +798,9 @@ public class ContextMenu extends AbstractExtension {
 	public static class ContextMenuOpenedOnTableHeaderEvent extends EventObject {
 		private static final long serialVersionUID = -1220618848356241248L;
 
-		private Object propertyId;
+		private final Object propertyId;
 
-		private ContextMenu contextMenu;
+		private final ContextMenu contextMenu;
 
 		public ContextMenuOpenedOnTableHeaderEvent(ContextMenu contextMenu,
 				Table source, Object propertyId) {
@@ -816,9 +826,9 @@ public class ContextMenu extends AbstractExtension {
 	public static class ContextMenuOpenedOnTableFooterEvent extends EventObject {
 		private static final long serialVersionUID = 1999781663913723438L;
 
-		private Object propertyId;
+		private final Object propertyId;
 
-		private ContextMenu contextMenu;
+		private final ContextMenu contextMenu;
 
 		public ContextMenuOpenedOnTableFooterEvent(ContextMenu contextMenu,
 				Table source, Object propertyId) {
@@ -844,9 +854,9 @@ public class ContextMenu extends AbstractExtension {
 	public static class ContextMenuOpenedOnTableRowEvent extends EventObject {
 		private static final long serialVersionUID = -470218301318358912L;
 
-		private ContextMenu contextMenu;
-		private Object propertyId;
-		private Object itemId;
+		private final ContextMenu contextMenu;
+		private final Object propertyId;
+		private final Object itemId;
 
 		public ContextMenuOpenedOnTableRowEvent(ContextMenu contextMenu,
 				Table table, Object itemId, Object propertyId) {
