@@ -1,0 +1,8 @@
+/* This is SCSS theme for test project file, which will use contextmenu.scss to get the actual context menu specific styles. Do not include this file into the jar */
+@import "../reindeer/reindeer.scss";
+@import "contextmenu.scss";
+
+@mixin contextmenuproject {
+  @include reindeer;
+  @include contextmenu-extension;
+}
