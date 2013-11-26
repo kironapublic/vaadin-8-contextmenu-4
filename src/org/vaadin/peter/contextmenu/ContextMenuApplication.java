@@ -1,5 +1,6 @@
 package org.vaadin.peter.contextmenu;
 
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
@@ -114,7 +115,9 @@ public class ContextMenuApplication extends UI {
 			}
 		});
 
-		buttonContextMenu.addItem("TestItem").addItem("TestItem");
+		ContextMenuItem buttonRootItem = buttonContextMenu.addItem("TestItem");
+		buttonRootItem.addStyleName("RootFancyStyle");
+		buttonRootItem.addItem("Sub TestItem").addStyleName("SomeFancyStyle");
 		buttonContextMenu.setAsContextMenuOf(button);
 
 		layout.addComponent(button);
@@ -151,7 +154,9 @@ public class ContextMenuApplication extends UI {
 
 		ContextMenu treeContextMenu = new ContextMenu();
 		treeContextMenu.addContextMenuTreeListener(treeItemListener);
-		treeContextMenu.addItem("Tree test item #1").setSeparatorVisible(true);
+		ContextMenuItem treeItem1 = treeContextMenu.addItem("Tree test item #1");
+		treeItem1.setSeparatorVisible(true);
+		treeItem1.addStyleName("treeStyle1");
 		treeContextMenu.addItem("Tree test item #2").setEnabled(false);
 		treeContextMenu.setAsTreeContextMenu(tree);
 
