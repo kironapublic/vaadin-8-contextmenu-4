@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import org.vaadin.peter.contextmenu.client.ContextMenuClientRpc;
@@ -21,6 +24,7 @@ import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
+import com.vaadin.shared.ui.ComponentStateUtil;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.FooterClickEvent;
@@ -557,7 +561,45 @@ public class ContextMenu extends AbstractExtension {
 				ContextMenu.ContextMenuItemClickListener clickListener) {
 			this.clickListeners.remove(clickListener);
 		}
+		
+		/**
+		 * Add a new style to the menu item. This method is following the
+		 * same semantics as {@link Component#addStyleName(String)}.
+		 * @param style the new style to be added to the component
+		 */
+	    public void addStyleName(String style) {
+	        if (style == null || "".equals(style)) {
+	            return;
+	        }
+	        if (style.contains(" ")) {
+	            // Split space separated style names and add them one by one.
+	            StringTokenizer tokenizer = new StringTokenizer(style, " ");
+	            while (tokenizer.hasMoreTokens()) {
+	                addStyleName(tokenizer.nextToken());
+	            }
+	            return;
+	        }
 
+	        Set<String> styles = state.getStyles();
+	        if (!styles.contains(style)) {
+	            styles.add(style);
+	        }
+	    }
+
+	    /**
+	     * Remove a style name from this menu item. This method is
+	     * following the same semantics as {@link Component#removeStyleName(String)}}.
+	     * @param style the style name or style names to be removed
+	     */
+	    public void removeStyleName(String style) {
+	        if (!state.getStyles().isEmpty()) {
+	            StringTokenizer tokenizer = new StringTokenizer(style, " ");
+	            while (tokenizer.hasMoreTokens()) {
+	            	state.getStyles().remove(tokenizer.nextToken());
+	            }
+	        }
+	    }
+		
 		@Override
 		public boolean equals(Object other) {
 			if (this == other) {
