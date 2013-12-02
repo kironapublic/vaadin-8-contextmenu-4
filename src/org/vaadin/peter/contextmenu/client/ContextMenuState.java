@@ -2,7 +2,9 @@ package org.vaadin.peter.contextmenu.client;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.vaadin.shared.AbstractComponentState;
 
@@ -88,9 +90,12 @@ public class ContextMenuState extends AbstractComponentState {
 		public boolean separator;
 
 		public boolean enabled = true;
+		
+		private Set<String> styles;
 
 		public ContextMenuItemState() {
 			children = new ArrayList<ContextMenuState.ContextMenuItemState>();
+			styles = new HashSet<String>();
 		}
 
 		public ContextMenuItemState addChild(String caption, String id) {
@@ -110,6 +115,15 @@ public class ContextMenuState extends AbstractComponentState {
 		public void setChildren(List<ContextMenuItemState> children) {
 			this.children = children;
 		}
+
+		public Set<String> getStyles() {
+			return styles;
+		}
+
+		public void setStyles(Set<String> styleNames) {
+			this.styles = styleNames;
+		}
+		
 	}
 
 }

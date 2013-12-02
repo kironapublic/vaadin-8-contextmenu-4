@@ -1,5 +1,7 @@
 package org.vaadin.peter.contextmenu.client;
 
+import java.util.Set;
+
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.google.gwt.core.client.GWT;
@@ -87,11 +89,19 @@ public class ContextMenuWidget extends Widget {
 				rootItem.caption, connector);
 		itemWidget.setEnabled(rootItem.enabled);
 		itemWidget.setSeparatorVisible(rootItem.separator);
+		
+		setStyleNames(itemWidget, rootItem.getStyles());
 
 		menuOverlay.addMenuItem(itemWidget);
 
 		for (ContextMenuItemState childState : rootItem.getChildren()) {
 			createSubMenu(itemWidget, childState, connector);
+		}
+	}
+	
+	private void setStyleNames(ContextMenuItemWidget item, Set<String> styles) {
+		for (String style : styles) {
+			item.addStyleName(style);
 		}
 	}
 
@@ -128,6 +138,7 @@ public class ContextMenuWidget extends Widget {
 				childState.id, childState.caption, connector);
 		childWidget.setEnabled(childState.enabled);
 		childWidget.setSeparatorVisible(childState.separator);
+		setStyleNames(childWidget, childState.getStyles());
 		parentWidget.addSubMenuItem(childWidget);
 
 		for (ContextMenuItemState child : childState.getChildren()) {
