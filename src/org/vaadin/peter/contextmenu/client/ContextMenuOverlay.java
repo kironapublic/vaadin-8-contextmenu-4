@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -31,11 +32,14 @@ class ContextMenuOverlay extends VOverlay {
 			unfocusAll();
 		}
 	};
+	
+	private final HandlerRegistration closeHandlerRegistration;
+
 
 	public ContextMenuOverlay() {
 		super(false, false, true);
 
-		addCloseHandler(closeHandler);
+		closeHandlerRegistration = addCloseHandler(closeHandler);
 		setStyleName("v-context-menu-container");
 
 		root = new FlowPanel();
@@ -44,6 +48,10 @@ class ContextMenuOverlay extends VOverlay {
 		menuItems = new LinkedList<ContextMenuItemWidget>();
 
 		add(root);
+	}
+	
+	public void unregister() {
+		closeHandlerRegistration.removeHandler();
 	}
 
 	public boolean isSubmenuOpen() {
