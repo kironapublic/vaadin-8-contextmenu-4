@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
@@ -47,6 +48,8 @@ public class ContextMenuWidget extends Widget {
 			}
 		}
 	};
+	
+	private final HandlerRegistration nativeEventHandlerRegistration;
 
 	private boolean hideAutomatically;
 
@@ -54,7 +57,8 @@ public class ContextMenuWidget extends Widget {
 		Element element = DOM.createDiv();
 		setElement(element);
 
-		Event.addNativePreviewHandler(nativeEventHandler);
+		nativeEventHandlerRegistration
+				= Event.addNativePreviewHandler(nativeEventHandler);
 
 		menuOverlay = new ContextMenuOverlay();
 	}
@@ -158,8 +162,8 @@ public class ContextMenuWidget extends Widget {
 		menuOverlay.showRelativeTo(widget);
 	}
 
-	public void addCloseHandler(CloseHandler<PopupPanel> popupCloseHandler) {
-		menuOverlay.addCloseHandler(popupCloseHandler);
+	public HandlerRegistration addCloseHandler(CloseHandler<PopupPanel> popupCloseHandler) {
+		return menuOverlay.addCloseHandler(popupCloseHandler);
 	}
 
 	public void setHideAutomatically(boolean hideAutomatically) {
@@ -170,4 +174,8 @@ public class ContextMenuWidget extends Widget {
 		return hideAutomatically;
 	}
 
+	public void unregister() {
+		nativeEventHandlerRegistration.removeHandler();
+		menuOverlay.unregister();
+	}
 }

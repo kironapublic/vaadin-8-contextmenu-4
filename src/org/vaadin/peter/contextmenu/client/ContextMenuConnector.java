@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -78,7 +79,11 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 			}
 		}
 	};
+	
+	private HandlerRegistration contextMenuCloseHandlerRegistration;
 
+	private HandlerRegistration contextMenuHandlerRegistration;
+	
 	@SuppressWarnings("serial")
 	private ContextMenuClientRpc serverToClientRPC = new ContextMenuClientRpc() {
 
@@ -110,7 +115,8 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	@Override
 	protected void init() {
 		widget = GWT.create(ContextMenuWidget.class);
-		widget.addCloseHandler(contextMenuCloseHandler);
+		contextMenuCloseHandlerRegistration
+				= widget.addCloseHandler(contextMenuCloseHandler);
 		registerRpc(ContextMenuClientRpc.class, serverToClientRPC);
 	}
 
@@ -141,7 +147,17 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 			return;
 		}
 
-		this.extensionTarget.addDomHandler(contextMenuHandler,
-				ContextMenuEvent.getType());
+		contextMenuHandlerRegistration = this.extensionTarget.addDomHandler(
+				contextMenuHandler, ContextMenuEvent.getType());
+	}
+
+	@Override
+	public void onUnregister() {
+		contextMenuCloseHandlerRegistration.removeHandler();
+		contextMenuHandlerRegistration.removeHandler();
+
+		widget.unregister();
+
+		super.onUnregister();
 	}
 }
