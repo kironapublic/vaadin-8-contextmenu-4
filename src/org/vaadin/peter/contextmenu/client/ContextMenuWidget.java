@@ -48,7 +48,7 @@ public class ContextMenuWidget extends Widget {
 			}
 		}
 	};
-	
+
 	private final HandlerRegistration nativeEventHandlerRegistration;
 
 	private boolean hideAutomatically;
@@ -57,8 +57,8 @@ public class ContextMenuWidget extends Widget {
 		Element element = DOM.createDiv();
 		setElement(element);
 
-		nativeEventHandlerRegistration
-				= Event.addNativePreviewHandler(nativeEventHandler);
+		nativeEventHandlerRegistration = Event
+				.addNativePreviewHandler(nativeEventHandler);
 
 		menuOverlay = new ContextMenuOverlay();
 	}
@@ -93,7 +93,7 @@ public class ContextMenuWidget extends Widget {
 				rootItem.caption, connector);
 		itemWidget.setEnabled(rootItem.enabled);
 		itemWidget.setSeparatorVisible(rootItem.separator);
-		
+
 		setStyleNames(itemWidget, rootItem.getStyles());
 
 		menuOverlay.addMenuItem(itemWidget);
@@ -102,7 +102,7 @@ public class ContextMenuWidget extends Widget {
 			createSubMenu(itemWidget, childState, connector);
 		}
 	}
-	
+
 	private void setStyleNames(ContextMenuItemWidget item, Set<String> styles) {
 		for (String style : styles) {
 			item.addStyleName(style);
@@ -162,7 +162,8 @@ public class ContextMenuWidget extends Widget {
 		menuOverlay.showRelativeTo(widget);
 	}
 
-	public HandlerRegistration addCloseHandler(CloseHandler<PopupPanel> popupCloseHandler) {
+	public HandlerRegistration addCloseHandler(
+			CloseHandler<PopupPanel> popupCloseHandler) {
 		return menuOverlay.addCloseHandler(popupCloseHandler);
 	}
 
