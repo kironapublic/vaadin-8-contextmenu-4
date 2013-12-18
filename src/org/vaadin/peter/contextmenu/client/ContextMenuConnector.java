@@ -79,11 +79,11 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 			}
 		}
 	};
-	
+
 	private HandlerRegistration contextMenuCloseHandlerRegistration;
 
 	private HandlerRegistration contextMenuHandlerRegistration;
-	
+
 	@SuppressWarnings("serial")
 	private ContextMenuClientRpc serverToClientRPC = new ContextMenuClientRpc() {
 
@@ -115,8 +115,8 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 	@Override
 	protected void init() {
 		widget = GWT.create(ContextMenuWidget.class);
-		contextMenuCloseHandlerRegistration
-				= widget.addCloseHandler(contextMenuCloseHandler);
+		contextMenuCloseHandlerRegistration = widget
+				.addCloseHandler(contextMenuCloseHandler);
 		registerRpc(ContextMenuClientRpc.class, serverToClientRPC);
 	}
 
