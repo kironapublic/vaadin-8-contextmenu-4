@@ -61,6 +61,7 @@ public class ContextMenuWidget extends Widget {
 				.addNativePreviewHandler(nativeEventHandler);
 
 		menuOverlay = new ContextMenuOverlay();
+		menuOverlay.setOwner(this);
 	}
 
 	protected boolean eventTargetContextMenu(Event nativeEvent) {

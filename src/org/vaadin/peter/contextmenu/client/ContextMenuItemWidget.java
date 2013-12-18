@@ -136,6 +136,7 @@ public class ContextMenuItemWidget extends FocusWidget {
 	public void addSubMenuItem(ContextMenuItemWidget contextMenuItem) {
 		if (!hasSubMenu()) {
 			subMenu = new ContextMenuOverlay();
+			subMenu.setOwner(parentItem);
 			setStylePrimaryName("v-context-menu-item-basic-submenu");
 		}
 
