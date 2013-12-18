@@ -4,5 +4,5 @@
 
 @mixin contextmenuproject {
   @include reindeer;
-  @include contextmenu-extension;
+  @include contextmenu;
 }

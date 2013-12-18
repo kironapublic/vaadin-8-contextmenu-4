@@ -14,7 +14,6 @@ public class ContextMenuState extends AbstractComponentState {
 	private List<ContextMenuItemState> rootItems;
 
 	private boolean openAutomatically;
-
 	private boolean hideAutomatically;
 
 	public ContextMenuState() {
@@ -90,7 +89,7 @@ public class ContextMenuState extends AbstractComponentState {
 		public boolean separator;
 
 		public boolean enabled = true;
-		
+
 		private Set<String> styles;
 
 		public ContextMenuItemState() {
@@ -116,6 +115,10 @@ public class ContextMenuState extends AbstractComponentState {
 			this.children = children;
 		}
 
+		public void removeChild(ContextMenuItemState child) {
+			children.remove(child);
+		}
+
 		public Set<String> getStyles() {
 			return styles;
 		}
@@ -123,7 +126,23 @@ public class ContextMenuState extends AbstractComponentState {
 		public void setStyles(Set<String> styleNames) {
 			this.styles = styleNames;
 		}
-		
-	}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+
+			if (obj instanceof ContextMenuItemState) {
+				return this.id.equals(((ContextMenuItemState) obj).id);
+			}
+
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return id.hashCode();
+		}
+	}
 }

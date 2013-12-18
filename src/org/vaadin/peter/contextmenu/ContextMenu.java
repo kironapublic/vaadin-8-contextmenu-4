@@ -24,7 +24,6 @@ import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
-import com.vaadin.shared.ui.ComponentStateUtil;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.FooterClickEvent;
@@ -144,7 +143,7 @@ public class ContextMenu extends AbstractExtension {
 		ContextMenuItemState itemState = getState().addChild(caption,
 				getNextId());
 
-		ContextMenuItem item = new ContextMenuItem(itemState);
+		ContextMenuItem item = new ContextMenuItem(null, itemState);
 		items.put(itemState.id, item);
 
 		return item;
@@ -176,13 +175,37 @@ public class ContextMenu extends AbstractExtension {
 	}
 
 	/**
-	 * Removes given root item from the context menu
+	 * Removes given context menu item from the context menu. The given item can
+	 * be a root item or leaf item or anything in between. If given given is not
+	 * found from the context menu structure, this method has no effect.
 	 * 
 	 * @param contextMenuItem
 	 */
-	public void removeRootItem(ContextMenuItem contextMenuItem) {
-		items.remove(contextMenuItem);
-		getState().getRootItems().remove(contextMenuItem);
+	public void removeItem(ContextMenuItem contextMenuItem) {
+		if (!hasMenuItem(contextMenuItem)) {
+			return;
+		}
+
+		if (contextMenuItem.isRootItem()) {
+			getState().getRootItems().remove(contextMenuItem.state);
+		} else {
+			ContextMenuItem parent = contextMenuItem.getParent();
+			parent.state.getChildren().remove(contextMenuItem.state);
+		}
+
+		Set<ContextMenuItem> children = contextMenuItem.getAllChildren();
+
+		items.remove(contextMenuItem.state.id);
+
+		for (ContextMenuItem child : children) {
+			items.remove(child.state.id);
+		}
+
+		markAsDirty();
+	}
+
+	private boolean hasMenuItem(ContextMenuItem contextMenuItem) {
+		return items.containsKey(contextMenuItem.state.id);
 	}
 
 	/**
@@ -399,13 +422,17 @@ public class ContextMenu extends AbstractExtension {
 	public class ContextMenuItem implements Serializable {
 		private static final long serialVersionUID = -6514832427611690050L;
 
+		private ContextMenuItem parent;
 		private final ContextMenuItemState state;
 
 		private final List<ContextMenu.ContextMenuItemClickListener> clickListeners;
 
 		private Object data;
 
-		protected ContextMenuItem(ContextMenuItemState itemState) {
+		protected ContextMenuItem(ContextMenuItem parent,
+				ContextMenuItemState itemState) {
+			this.parent = parent;
+
 			if (itemState == null) {
 				throw new NullPointerException(
 						"Context menu item state must not be null");
@@ -413,6 +440,26 @@ public class ContextMenu extends AbstractExtension {
 
 			clickListeners = new ArrayList<ContextMenu.ContextMenuItemClickListener>();
 			this.state = itemState;
+		}
+
+		protected Set<ContextMenuItem> getAllChildren() {
+			Set<ContextMenuItem> children = new HashSet<ContextMenu.ContextMenuItem>();
+
+			for (ContextMenuItemState childState : state.getChildren()) {
+				ContextMenuItem child = items.get(childState.id);
+				children.add(child);
+				children.addAll(child.getAllChildren());
+			}
+
+			return children;
+		}
+
+		/**
+		 * @return parent item of this menu item. Null if this item is a root
+		 *         item.
+		 */
+		protected ContextMenuItem getParent() {
+			return parent;
 		}
 
 		protected void notifyClickListeners() {
@@ -449,7 +496,7 @@ public class ContextMenu extends AbstractExtension {
 		public ContextMenuItem addItem(String caption) {
 			ContextMenuItemState childItemState = state.addChild(caption,
 					getNextId());
-			ContextMenuItem item = new ContextMenuItem(childItemState);
+			ContextMenuItem item = new ContextMenuItem(this, childItemState);
 
 			items.put(childItemState.id, item);
 			markAsDirty();
@@ -506,6 +553,7 @@ public class ContextMenu extends AbstractExtension {
 		 */
 		public void setSeparatorVisible(boolean separatorVisible) {
 			state.separator = separatorVisible;
+			markAsDirty();
 		}
 
 		/**
@@ -541,6 +589,13 @@ public class ContextMenu extends AbstractExtension {
 		}
 
 		/**
+		 * @return true if this item is root item, false otherwise.
+		 */
+		public boolean isRootItem() {
+			return parent == null;
+		}
+
+		/**
 		 * Adds context menu item click listener only to this item. This
 		 * listener will be invoked only when this item is clicked.
 		 * 
@@ -561,45 +616,49 @@ public class ContextMenu extends AbstractExtension {
 				ContextMenu.ContextMenuItemClickListener clickListener) {
 			this.clickListeners.remove(clickListener);
 		}
-		
+
 		/**
-		 * Add a new style to the menu item. This method is following the
-		 * same semantics as {@link Component#addStyleName(String)}.
-		 * @param style the new style to be added to the component
+		 * Add a new style to the menu item. This method is following the same
+		 * semantics as {@link Component#addStyleName(String)}.
+		 * 
+		 * @param style
+		 *            the new style to be added to the component
 		 */
-	    public void addStyleName(String style) {
-	        if (style == null || "".equals(style)) {
-	            return;
-	        }
-	        if (style.contains(" ")) {
-	            // Split space separated style names and add them one by one.
-	            StringTokenizer tokenizer = new StringTokenizer(style, " ");
-	            while (tokenizer.hasMoreTokens()) {
-	                addStyleName(tokenizer.nextToken());
-	            }
-	            return;
-	        }
+		public void addStyleName(String style) {
+			if (style == null || style.isEmpty()) {
+				return;
+			}
+			if (style.contains(" ")) {
+				// Split space separated style names and add them one by one.
+				StringTokenizer tokenizer = new StringTokenizer(style, " ");
+				while (tokenizer.hasMoreTokens()) {
+					addStyleName(tokenizer.nextToken());
+				}
+				return;
+			}
 
-	        Set<String> styles = state.getStyles();
-	        if (!styles.contains(style)) {
-	            styles.add(style);
-	        }
-	    }
+			state.getStyles().add(style);
+			markAsDirty();
+		}
 
-	    /**
-	     * Remove a style name from this menu item. This method is
-	     * following the same semantics as {@link Component#removeStyleName(String)}}.
-	     * @param style the style name or style names to be removed
-	     */
-	    public void removeStyleName(String style) {
-	        if (!state.getStyles().isEmpty()) {
-	            StringTokenizer tokenizer = new StringTokenizer(style, " ");
-	            while (tokenizer.hasMoreTokens()) {
-	            	state.getStyles().remove(tokenizer.nextToken());
-	            }
-	        }
-	    }
-		
+		/**
+		 * Remove a style name from this menu item. This method is following the
+		 * same semantics as {@link Component#removeStyleName(String)} .
+		 * 
+		 * @param style
+		 *            the style name or style names to be removed
+		 */
+		public void removeStyleName(String style) {
+			if (state.getStyles().isEmpty()) {
+				return;
+			}
+
+			StringTokenizer tokenizer = new StringTokenizer(style, " ");
+			while (tokenizer.hasMoreTokens()) {
+				state.getStyles().remove(tokenizer.nextToken());
+			}
+		}
+
 		@Override
 		public boolean equals(Object other) {
 			if (this == other) {
@@ -620,6 +679,7 @@ public class ContextMenu extends AbstractExtension {
 
 		/**
 		 * Changes the caption of the menu item
+		 * 
 		 * @param newCaption
 		 */
 		public void setCaption(String newCaption) {
