@@ -149,6 +149,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 		contextMenuHandlerRegistration = this.extensionTarget.addDomHandler(
 				contextMenuHandler, ContextMenuEvent.getType());
+		widget.setExtensionTarget(this.extensionTarget);
 	}
 
 	@Override

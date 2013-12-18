@@ -53,6 +53,8 @@ public class ContextMenuWidget extends Widget {
 
 	private boolean hideAutomatically;
 
+	private Widget extensionTarget;
+
 	public ContextMenuWidget() {
 		Element element = DOM.createDiv();
 		setElement(element);
@@ -61,7 +63,6 @@ public class ContextMenuWidget extends Widget {
 				.addNativePreviewHandler(nativeEventHandler);
 
 		menuOverlay = new ContextMenuOverlay();
-		menuOverlay.setOwner(this);
 	}
 
 	protected boolean eventTargetContextMenu(Event nativeEvent) {
@@ -179,5 +180,14 @@ public class ContextMenuWidget extends Widget {
 	public void unregister() {
 		nativeEventHandlerRegistration.removeHandler();
 		menuOverlay.unregister();
+	}
+
+	public void setExtensionTarget(Widget extensionTarget) {
+		this.extensionTarget = extensionTarget;
+		menuOverlay.setOwner(extensionTarget);
+	}
+
+	public Widget getExtensionTarget() {
+		return extensionTarget;
 	}
 }
