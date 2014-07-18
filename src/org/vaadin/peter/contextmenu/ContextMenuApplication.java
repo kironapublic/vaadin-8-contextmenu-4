@@ -17,6 +17,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Button;
@@ -56,8 +57,7 @@ public class ContextMenuApplication extends UI {
 	private final ContextMenuOpenedListener.TableListener openListener = new ContextMenuOpenedListener.TableListener() {
 
 		@Override
-		public void onContextMenuOpenFromRow(
-				ContextMenuOpenedOnTableRowEvent event) {
+		public void onContextMenuOpenFromRow(ContextMenuOpenedOnTableRowEvent event) {
 			event.getContextMenu().removeAllItems();
 			event.getContextMenu().addItem("Item " + event.getItemId());
 		}
@@ -121,9 +121,11 @@ public class ContextMenuApplication extends UI {
 			}
 		});
 
-		ContextMenuItem buttonRootItem = buttonContextMenu.addItem("TestItem");
+		ContextMenuItem buttonRootItem = buttonContextMenu.addItem("TestItem",
+				new ThemeResource("img/basic/arrow.png"));
 		buttonRootItem.addStyleName("RootFancyStyle");
-		buttonRootItem.addItem("Sub TestItem").addStyleName("SomeFancyStyle");
+		buttonRootItem.addItem("Sub TestItem", FontAwesome.GLASS).addStyleName(
+				"SomeFancyStyle");
 		buttonContextMenu.setAsContextMenuOf(button);
 
 		layout.addComponent(button);
@@ -195,8 +197,7 @@ public class ContextMenuApplication extends UI {
 
 				@Override
 				public void valueChange(ValueChangeEvent event) {
-					boolean newEnabled = (Boolean) event.getProperty()
-							.getValue();
+					boolean newEnabled = (Boolean) event.getProperty().getValue();
 					configurableMenuItem.setEnabled(newEnabled);
 				}
 			});
