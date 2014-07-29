@@ -53,6 +53,9 @@ public class ContextMenu extends AbstractExtension {
 		@Override
 		public void itemClicked(String itemId, boolean menuClosed) {
 			ContextMenuItem item = items.get(itemId);
+			if (item == null) {
+				return;
+			}
 
 			item.notifyClickListeners();
 			fireEvent(new ContextMenuItemClickEvent(item));
