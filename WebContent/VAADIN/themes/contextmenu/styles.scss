@@ -1,0 +1,10 @@
+@import "addons.scss";
+@import "contextmenuproject.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in docucom_sac.scss */
+
+.contextmenu {
+	@include addons;
+	@include contextmenuproject;
+}
