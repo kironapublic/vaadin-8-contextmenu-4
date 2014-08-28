@@ -34,6 +34,8 @@ class ContextMenuOverlay extends VOverlay {
 	};
 	
 	private final HandlerRegistration closeHandlerRegistration;
+    public static int Z_INDEX = VOverlay.Z_INDEX + 1; // to always display over tooltips
+
 
 
 	public ContextMenuOverlay() {
