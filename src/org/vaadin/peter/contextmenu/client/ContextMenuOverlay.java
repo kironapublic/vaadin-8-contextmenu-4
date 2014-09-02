@@ -32,14 +32,13 @@ class ContextMenuOverlay extends VOverlay {
 			unfocusAll();
 		}
 	};
-	
+
 	private final HandlerRegistration closeHandlerRegistration;
-    public static int Z_INDEX = VOverlay.Z_INDEX + 1; // to always display over tooltips
-
-
+	public static int Z_INDEX = VOverlay.Z_INDEX + 1; // to always display over
+														// tooltips
 
 	public ContextMenuOverlay() {
-		super(false, false, true);
+		super(false, false);
 
 		closeHandlerRegistration = addCloseHandler(closeHandler);
 		setStyleName("v-context-menu-container");
@@ -51,7 +50,7 @@ class ContextMenuOverlay extends VOverlay {
 
 		add(root);
 	}
-	
+
 	public void unregister() {
 		closeHandlerRegistration.removeHandler();
 	}
