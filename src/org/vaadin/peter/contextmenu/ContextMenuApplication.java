@@ -57,7 +57,8 @@ public class ContextMenuApplication extends UI {
 	private final ContextMenuOpenedListener.TableListener openListener = new ContextMenuOpenedListener.TableListener() {
 
 		@Override
-		public void onContextMenuOpenFromRow(ContextMenuOpenedOnTableRowEvent event) {
+		public void onContextMenuOpenFromRow(
+				ContextMenuOpenedOnTableRowEvent event) {
 			event.getContextMenu().removeAllItems();
 			event.getContextMenu().addItem("Item " + event.getItemId());
 		}
@@ -162,7 +163,8 @@ public class ContextMenuApplication extends UI {
 
 		ContextMenu treeContextMenu = new ContextMenu();
 		treeContextMenu.addContextMenuTreeListener(treeItemListener);
-		ContextMenuItem treeItem1 = treeContextMenu.addItem("Tree test item #1");
+		ContextMenuItem treeItem1 = treeContextMenu
+				.addItem("Tree test item #1");
 		treeItem1.setSeparatorVisible(true);
 		treeItem1.addStyleName("treeStyle1");
 		treeContextMenu.addItem("Tree test item #2").setEnabled(false);
@@ -197,7 +199,8 @@ public class ContextMenuApplication extends UI {
 
 				@Override
 				public void valueChange(ValueChangeEvent event) {
-					boolean newEnabled = (Boolean) event.getProperty().getValue();
+					boolean newEnabled = (Boolean) event.getProperty()
+							.getValue();
 					configurableMenuItem.setEnabled(newEnabled);
 				}
 			});

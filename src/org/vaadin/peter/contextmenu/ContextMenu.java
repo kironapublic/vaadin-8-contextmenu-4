@@ -278,6 +278,8 @@ public class ContextMenu extends AbstractExtension {
 	public void setAsTreeContextMenu(final Tree tree) {
 		extend(tree);
 
+		setOpenAutomatically(false);
+
 		tree.addItemClickListener(new ItemClickListener() {
 			private static final long serialVersionUID = 338499886052623304L;
 

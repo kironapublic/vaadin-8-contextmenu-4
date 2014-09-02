@@ -4,13 +4,13 @@ import org.vaadin.peter.contextmenu.ContextMenu;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
@@ -21,7 +21,6 @@ import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.client.ui.AbstractComponentConnector;
-import com.vaadin.client.ui.VTree;
 import com.vaadin.shared.ui.Connect;
 
 /**
@@ -142,14 +141,10 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 		this.extensionTarget = ((ComponentConnector) extensionTarget)
 				.getWidget();
 
-		// Tree is currently handled by it's internal ItemClickListener
-		if (this.extensionTarget instanceof VTree) {
-			return;
-		}
+		widget.setExtensionTarget(this.extensionTarget);
 
 		contextMenuHandlerRegistration = this.extensionTarget.addDomHandler(
 				contextMenuHandler, ContextMenuEvent.getType());
-		widget.setExtensionTarget(this.extensionTarget);
 	}
 
 	@Override
