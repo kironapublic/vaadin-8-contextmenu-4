@@ -125,7 +125,7 @@ public class ContextMenuWidget extends Widget {
 		widget.setId(id);
 		widget.setCaption(caption);
 
-		widget.setIcon(contextMenuConnector.getResourceUrl(id));
+		widget.setIcon(contextMenuConnector.getConnection().getIcon(contextMenuConnector.getResourceUrl(id)));
 
 		ContextMenuItemWidgetHandler handler = new ContextMenuItemWidgetHandler(
 				widget, contextMenuConnector);
