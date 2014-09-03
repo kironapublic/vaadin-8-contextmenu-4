@@ -12,7 +12,9 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorMap;
 import com.vaadin.client.ServerConnector;
@@ -59,9 +61,14 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 
 			EventTarget eventTarget = event.getNativeEvent().getEventTarget();
 
-			ComponentConnector connector = Util.getConnectorForElement(
-					getConnection(), getConnection().getUIConnector()
-							.getWidget(), (Element) eventTarget.cast());
+            ApplicationConnection connection = getConnection();
+            ComponentConnector connector =
+                    Util.getConnectorForElement(connection, getConnection().getUIConnector().getWidget(),
+                    (Element) eventTarget.cast());
+
+            if (connector == null) {
+                    connector = Util.getConnectorForElement(connection, RootPanel.get(), (Element) eventTarget.cast());
+            }
 
 			Widget clickTargetWidget = connector.getWidget();
 
