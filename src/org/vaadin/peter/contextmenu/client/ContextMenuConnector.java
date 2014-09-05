@@ -70,7 +70,7 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
                     connector = Util.getConnectorForElement(connection, RootPanel.get(), (Element) eventTarget.cast());
             }
 
-			Widget clickTargetWidget = connector.getWidget();
+			Widget clickTargetWidget = findTargetWidget(connector.getWidget(), extensionTarget);
 
 			if (extensionTarget.equals(clickTargetWidget)) {
 				if (getState().isOpenAutomatically()) {
@@ -84,6 +84,17 @@ public class ContextMenuConnector extends AbstractExtensionConnector {
 				}
 			}
 		}
+
+        private Widget findTargetWidget(Widget widget, Widget target) {
+            if (widget != null) {
+                if (target.equals(widget)) {
+                    return widget;
+                } else {
+                    return findTargetWidget(widget.getParent(), target);
+                }
+            }
+            return null;
+        }
 	};
 
 	private HandlerRegistration contextMenuCloseHandlerRegistration;
