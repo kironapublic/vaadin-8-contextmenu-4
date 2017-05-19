@@ -18,19 +18,19 @@ import org.vaadin.peter.contextmenu.client.ContextMenuServerRpc;
 import org.vaadin.peter.contextmenu.client.ContextMenuState;
 import org.vaadin.peter.contextmenu.client.ContextMenuState.ContextMenuItemState;
 
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.FooterClickEvent;
-import com.vaadin.ui.Table.FooterClickListener;
-import com.vaadin.ui.Table.HeaderClickEvent;
-import com.vaadin.ui.Table.HeaderClickListener;
-import com.vaadin.ui.Tree;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.Table.FooterClickEvent;
+import com.vaadin.v7.ui.Table.FooterClickListener;
+import com.vaadin.v7.ui.Table.HeaderClickEvent;
+import com.vaadin.v7.ui.Table.HeaderClickListener;
+import com.vaadin.v7.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.util.ReflectTools;
 
@@ -42,6 +42,7 @@ import com.vaadin.util.ReflectTools;
  * 
  * @author Peter / Vaadin
  */
+@SuppressWarnings("deprecation")
 public class ContextMenu extends AbstractExtension {
 	private static final long serialVersionUID = 4275181115413786498L;
 
