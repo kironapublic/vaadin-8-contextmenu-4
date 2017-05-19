@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Vaadin-Stylesheets: VAADIN/themes/contextmenu/contextmenu.scss
-Implementation-Title: ContextMenu
-Implementation-Version: 4.5
-Vaadin-Widgetsets: org.vaadin.peter.contextmenu.ContextmenuWidgetset
-Vaadin-Package-Version: 1
-Class-Path: 
-
